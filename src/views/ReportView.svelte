@@ -53,7 +53,7 @@
     <div class="panel model-panel">
         <h2 class="panel-title">Model Details</h2>
         <div class="model-explanation">
-            <p>The LCOH is calculated as a sum of non-linear functions representing capital, financing, operational, and interaction effects:</p>
+            <p>This is a simplified model for a system with a stable fossil-fuel combustion input. The LCOH is calculated as a sum of non-linear functions representing capital, financing, operational, and interaction effects:</p>
             <p class="math"><em>LCOH = f(C, η, r, F) = Base + Finance + Ops + Interaction</em></p>
             <ul>
                 <li><strong>Base Cost:</strong> A polynomial function combining a linear penalty for high capital cost (<em>C</em>) with a cubic term for efficiency (<em>η</em>), representing diminishing returns at high efficiency levels.</li>
