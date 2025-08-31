@@ -3,6 +3,7 @@
     import { scenarioStore } from '../stores/scenarioStore.js';
     import { dataStore } from '../stores/dataStore.js';
     import { technoEconomicModel, parameterRanges } from '../lib/model.js';
+    import { analysisMappers } from '../lib/analysisMappers.js';
     import Slider from '../components/ui/Slider.svelte';
     import AnalysisBox from '../components/ui/AnalysisBox.svelte';
 
@@ -21,12 +22,27 @@
     function handlePcpUpdate(event) {
         scenarioStore.setPcpSelections(event.detail);
     }
+    function handleTogglePin(event) {
+        const { id } = event.detail;
+        const currentPins = $scenarioStore.workingState.pinned || [];
+        const newPins = currentPins.filter(item => item.id !== id);
+        scenarioStore.setPinnedItems(newPins);
+    }
     
     // --- PINNING LOGIC ---
     $: pinnedAnalyses = ($scenarioStore.workingState.pinned || [])
-        .map(item => {
-            const config = analyses[item.id];
-            return config ? { ...item, ...config } : null;
+        .map(pinnedItem => {
+            const staticConfig = analyses[pinnedItem.id];
+            if (!staticConfig) return null;
+
+            const dynamicProps = analysisMappers[pinnedItem.id]
+                ? analysisMappers[pinnedItem.id]($dataStore, $scenarioStore.workingState)
+                : {};
+
+            return {
+                ...staticConfig,
+                props: { ...staticConfig.props, ...dynamicProps }
+            };
         })
         .filter(Boolean);
 
@@ -91,12 +107,13 @@
                         id={analysis.id}
                         title={analysis.title}
                         layout={analysis.layout}
-                        explanation={analysis.explanation} 
+                        explanation={analysis.explanation}
+                        isPinned={true}
+                        on:togglePin={handleTogglePin}
                     >
                        <svelte:component
                             this={analysis.component}
                             {...analysis.props}
-                            {...analysis.getData($dataStore, $scenarioStore.workingState)}
                             on:update={analysis.id === 'pcp' ? handlePcpUpdate : null}
                        />
                     </AnalysisBox>

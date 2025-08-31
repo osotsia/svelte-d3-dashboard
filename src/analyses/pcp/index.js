@@ -8,11 +8,5 @@ export default {
     explanation: 'This plot shows relationships between model inputs and a single output. Each line represents one model run, allowing for visual filtering and correlation analysis.',
     props: {
         colorKey: 'LCOH'
-    },
-    // The second argument is now the `workingState` object, not the full store
-    getData: ($dataStore, $workingState) => ({
-        data: $dataStore.pcp?.data || [],
-        keys: ($dataStore.pcp?.axes || []).map(axis => axis.name),
-        selections: $workingState?.pcpSelections || {}
-    })
+    }
 };

@@ -11,9 +11,5 @@ export default {
         yKey: 'feature',
         xLabel: 'Importance (Gain)',
         yLabel: 'Parameter'
-    },
-    // FIX: Standardized function signature
-    getData: ($dataStore, $workingState) => ({
-        data: $dataStore['feature-importance']?.data || []
-    })
+    }
 };

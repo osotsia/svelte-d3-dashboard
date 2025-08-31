@@ -11,9 +11,5 @@ export default {
         yKey: 'residual',
         xLabel: 'Fitted LCOH Values',
         yLabel: 'LCOH Residuals'
-    },
-    // FIX: Standardized function signature
-    getData: ($dataStore, $workingState) => ({
-        data: $dataStore.residuals?.data || []
-    })
+    }
 };

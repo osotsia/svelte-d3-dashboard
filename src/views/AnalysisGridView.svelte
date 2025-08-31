@@ -1,26 +1,13 @@
 <script>
-    import { analyses } from '../analyses/index.js';
-    import { dataStore } from '../stores/dataStore.js';
     import { scenarioStore } from '../stores/scenarioStore.js';
     import AnalysisBox from '../components/ui/AnalysisBox.svelte';
 
-    export let analysisIds = [];
+    export let analyses = [];
     export let maxColumns = null;
 
-    $: allAnalyses = analysisIds
-        .map(id => analyses[id])
-        .filter(Boolean);
-    
-    $: nonFullWidthCount = allAnalyses.filter(a => a.layout !== 'full-width').length;
-    $: hasFullWidthItems = allAnalyses.some(a => a.layout === 'full-width');
+    $: nonFullWidthCount = analyses.filter(a => a.layout !== 'full-width').length;
+    $: hasFullWidthItems = analyses.some(a => a.layout === 'full-width');
     $: isThinLayoutScenario = nonFullWidthCount === 1 && hasFullWidthItems;
-
-    $: viewAnalyses = [...allAnalyses].sort((a, b) => {
-        const isAFullWidth = a.layout === 'full-width';
-        const isBFullWidth = b.layout === 'full-width';
-        if (isAFullWidth === isBFullWidth) return 0;
-        return isAFullWidth ? 1 : -1;
-    });
     
     $: gridStyle = maxColumns ? `grid-template-columns: repeat(${maxColumns}, 1fr);` : '';
 
@@ -29,21 +16,35 @@
             scenarioStore.setPcpSelections(event.detail);
         }
     }
+
+    function handleTogglePin(event) {
+        const { id, title } = event.detail;
+        const currentPins = $scenarioStore.workingState.pinned || [];
+        const isCurrentlyPinned = currentPins.some(item => item.id === id);
+        
+        const newPins = isCurrentlyPinned
+            ? currentPins.filter(item => item.id !== id)
+            : [...currentPins, { id, title }];
+            
+        scenarioStore.setPinnedItems(newPins);
+    }
 </script>
 
 <div class="view-container" style={gridStyle}>
-    {#each viewAnalyses as analysis (analysis.id)}
+    {#each analyses as analysis (analysis.id)}
         {@const effectiveLayout = isThinLayoutScenario && analysis.layout !== 'full-width' ? 'full-width' : analysis.layout}
+        {@const isPinned = $scenarioStore.workingState.pinned.some(p => p.id === analysis.id)}
         <AnalysisBox
             id={analysis.id}
             title={analysis.title}
             layout={effectiveLayout}
             explanation={analysis.explanation}
+            isPinned={isPinned}
+            on:togglePin={handleTogglePin}
         >
             <svelte:component
                 this={analysis.component}
                 {...analysis.props}
-                {...analysis.getData($dataStore, $scenarioStore.workingState)}
                 on:update={(e) => handleUpdate(e, analysis.id)}
             />
         </AnalysisBox>

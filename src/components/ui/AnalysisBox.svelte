@@ -1,30 +1,17 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.js';
+    import { createEventDispatcher } from 'svelte';
     import Icon from './Icon.svelte';
 
     export let id;
     export let title;
     export let layout = 'default';
     export let explanation = '';
+    export let isPinned = false;
 
-    let isPinned = false;
-    let currentPins = [];
-
-    // FIX: Changed $scenarioStore.currentScenario.pinned to $scenarioStore.workingState.pinned
-    $: {
-        currentPins = $scenarioStore.workingState.pinned || [];
-        isPinned = currentPins.some(item => item.id === id);
-    }
+    const dispatch = createEventDispatcher();
 
     function togglePin() {
-        let newPins;
-        if (isPinned) {
-            newPins = currentPins.filter(item => item.id !== id);
-        } else {
-            newPins = [...currentPins, { id, title }];
-        }
-        // This correctly calls the store method to update the workingState
-        scenarioStore.setPinnedItems(newPins);
+        dispatch('togglePin', { id, title });
     }
 </script>
 
