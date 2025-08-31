@@ -69,7 +69,7 @@
         <h2 class="panel-title">Model Calculator</h2>
         <div class="lcoh-result-box">
             <span>Levelized Cost of Heat (LCOH)</span>
-            <span class="lcoh-value">{lcohResult.toFixed(2)}</span>
+            <span class="lcoh-value">${lcohResult.toFixed(2)} <span class="lcoh-unit">/ MWh</span></span>
         </div>
         
         {#each Object.entries(parameterRanges) as [key, config]}
@@ -132,6 +132,7 @@
     .narrative-panel, .pinned-items-panel { grid-column: 1 / -1; }
     .lcoh-result-box { background-color: var(--bg-color); border-radius: 6px; padding: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
     .lcoh-value { font-size: 2rem; font-weight: 600; color: var(--header-color); }
+    .lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
     .pinned-items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: var(--spacing-unit); }
     :global(.pinned-items-grid > .full-width) { grid-column: 1 / -1; }
