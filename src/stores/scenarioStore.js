@@ -20,94 +20,126 @@ function loadFromStorage() {
 }
 
 function createScenarioStore() {
+    let _defaultScenario = {}; // To be set by initialize()
+
     const { subscribe, set, update } = writable({
         scenarios: loadFromStorage(),
-        currentScenario: {
+        workingState: {
             parameters: {},
             narrative: '',
             pinned: [],
-            pcpSelections: {} 
+            pcpSelections: {}
         },
-        activeScenarioName: null
+        activeScenarioName: null,
+        isDirty: false
     });
 
-    return {
+    const store = {
         subscribe,
-        setParameters: (params) => update(store => {
-            const newScenario = { ...store.currentScenario, parameters: params };
-            return { ...store, currentScenario: newScenario, activeScenarioName: findMatchingScenarioName(newScenario, store.scenarios) };
-        }),
-        setNarrative: (narrative) => update(store => {
-            const newScenario = { ...store.currentScenario, narrative: narrative };
-            return { ...store, currentScenario: newScenario, activeScenarioName: findMatchingScenarioName(newScenario, store.scenarios) };
-        }),
-        setPinnedItems: (pinnedItems) => update(store => {
-            const newScenario = { ...store.currentScenario, pinned: pinnedItems };
-            return { ...store, currentScenario: newScenario, activeScenarioName: findMatchingScenarioName(newScenario, store.scenarios) };
-        }),
-        setPcpSelections: (selections) => update(store => {
-            const newScenario = { ...store.currentScenario, pcpSelections: selections };
-            return { ...store, currentScenario: newScenario, activeScenarioName: findMatchingScenarioName(newScenario, store.scenarios) };
-        }),
-        saveCurrentScenario: (name) => update(store => {
-            if (name && name.trim()) {
-                const trimmedName = name.trim();
-                const newScenarios = { ...store.scenarios, [trimmedName]: store.currentScenario };
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
-                return { ...store, scenarios: newScenarios, activeScenarioName: trimmedName };
-            }
-            return store;
-        }),
-        loadScenario: (name) => update(store => {
-            if (store.scenarios[name]) {
-                const loadedScenario = {
-                    narrative: '',
-                    pinned: [],
-                    pcpSelections: {},
-                    ...store.scenarios[name]
-                };
-                return { ...store, currentScenario: loadedScenario, activeScenarioName: name };
-            }
-            return store;
-        }),
-        deleteScenario: (name) => update(store => {
-            if (store.scenarios[name]) {
-                const newScenarios = { ...store.scenarios };
-                delete newScenarios[name];
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
-                const newActiveName = store.activeScenarioName === name ? null : store.activeScenarioName;
-                return { ...store, scenarios: newScenarios, activeScenarioName: newActiveName };
-            }
-            return store;
-        }),
         initialize: (defaultScenario) => {
-            update(store => ({ ...store, currentScenario: defaultScenario, activeScenarioName: findMatchingScenarioName(defaultScenario, store.scenarios) }));
-        }
-    };
-}
+            _defaultScenario = JSON.parse(JSON.stringify(defaultScenario)); // Deep copy
+            update(s => ({
+                ...s,
+                workingState: JSON.parse(JSON.stringify(defaultScenario)) // Deep copy
+            }));
+        },
 
-function findMatchingScenarioName(currentScenario, scenarios) {
-    if (!currentScenario || !currentScenario.parameters) return null;
-    const currentNorm = {
-        narrative: '',
-        pinned: [],
-        pcpSelections: {},
-        ...currentScenario
+        // --- State Modifiers ---
+        setParameters: (params) => update(s => {
+            s.workingState.parameters = params;
+            s.isDirty = true;
+            return s;
+        }),
+        setNarrative: (narrative) => update(s => {
+            s.workingState.narrative = narrative;
+            s.isDirty = true;
+            return s;
+        }),
+        setPinnedItems: (pinnedItems) => update(s => {
+            s.workingState.pinned = pinnedItems;
+            s.isDirty = true;
+            return s;
+        }),
+        setPcpSelections: (selections) => update(s => {
+            s.workingState.pcpSelections = selections;
+            s.isDirty = true;
+            return s;
+        }),
+
+        // --- Scenario Actions ---
+        newScenario: () => update(s => {
+            if (s.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
+                return s;
+            }
+            return {
+                ...s,
+                workingState: JSON.parse(JSON.stringify(_defaultScenario)),
+                activeScenarioName: null,
+                isDirty: false
+            };
+        }),
+
+        loadScenario: (name) => update(s => {
+            if (!s.scenarios[name]) return s;
+            if (s.isDirty && !confirm(`You have unsaved changes. Discard them and load "${name}"?`)) {
+                return s;
+            }
+            const loadedScenario = {
+                narrative: '',
+                pinned: [],
+                pcpSelections: {},
+                ...s.scenarios[name]
+            };
+            return {
+                ...s,
+                workingState: JSON.parse(JSON.stringify(loadedScenario)),
+                activeScenarioName: name,
+                isDirty: false
+            };
+        }),
+
+        saveCurrentScenario: (name) => update(s => {
+            if (!name || !name.trim()) return s;
+            
+            const trimmedName = name.trim();
+            const newScenarios = { ...s.scenarios, [trimmedName]: s.workingState };
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
+            
+            return {
+                ...s,
+                scenarios: newScenarios,
+                activeScenarioName: trimmedName,
+                isDirty: false
+            };
+        }),
+
+        deleteScenario: (name) => update(s => {
+            if (!s.scenarios[name] || !confirm(`Are you sure you want to delete scenario "${name}"?`)) {
+                return s; // Abort, no state change
+            }
+
+            // Create a new object for the scenarios to ensure immutability
+            const newScenarios = { ...s.scenarios };
+            delete newScenarios[name];
+            
+            // Persist the change to localStorage
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
+
+            // Create a new state object to return
+            const newState = { ...s, scenarios: newScenarios };
+
+            // If the deleted scenario was the active one, reset the working state
+            if (s.activeScenarioName === name) {
+                newState.workingState = JSON.parse(JSON.stringify(_defaultScenario));
+                newState.activeScenarioName = null;
+                newState.isDirty = false;
+            }
+
+            return newState;
+        }),
     };
-    const currentJSON = JSON.stringify(currentNorm, Object.keys(currentNorm).sort());
-    for (const [name, savedScenario] of Object.entries(scenarios)) {
-        const savedNorm = {
-            narrative: '',
-            pinned: [],
-            pcpSelections: {},
-            ...savedScenario
-        };
-        const savedJSON = JSON.stringify(savedNorm, Object.keys(savedNorm).sort());
-        if (savedJSON === currentJSON) {
-            return name;
-        }
-    }
-    return null;
+
+    return store;
 }
 
 export const scenarioStore = createScenarioStore();

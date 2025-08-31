@@ -12,7 +12,8 @@ export default {
         confKeys: ['S1_conf', 'ST_conf'],
         xLabel: 'Sobol Index Value'
     },
-    getData: ($dataStore) => ({
+    // FIX: Standardized function signature
+    getData: ($dataStore, $workingState) => ({
         data: $dataStore.sobol?.indices || []
     })
 };

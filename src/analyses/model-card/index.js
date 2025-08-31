@@ -4,10 +4,11 @@ export default {
     id: 'model-card',
     title: 'Surrogate Model Card',
     component: ModelCardDisplay,
-    layout: 'default', // Ensures it is not full-width
+    layout: 'default',
     explanation: 'Key metadata and performance metrics for the trained XGBoost surrogate model.',
-    props: {}, // No specific props needed, data is passed directly
-    getData: ($dataStore) => ({
+    props: {},
+    // FIX: Standardized function signature
+    getData: ($dataStore, $workingState) => ({
         data: $dataStore.model_card || {}
     })
 };

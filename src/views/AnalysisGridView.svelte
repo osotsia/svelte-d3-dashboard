@@ -7,19 +7,14 @@
     export let analysisIds = [];
     export let maxColumns = null;
 
-    // Derive the full analysis configurations from the provided IDs.
     $: allAnalyses = analysisIds
         .map(id => analyses[id])
         .filter(Boolean);
     
-    // --- CONTEXT-AWARE LAYOUT LOGIC ---
-    // Detect the specific scenario where a single standard-width item
-    // would be left "thin" in a row above a full-width item.
     $: nonFullWidthCount = allAnalyses.filter(a => a.layout !== 'full-width').length;
     $: hasFullWidthItems = allAnalyses.some(a => a.layout === 'full-width');
     $: isThinLayoutScenario = nonFullWidthCount === 1 && hasFullWidthItems;
 
-    // The sort is still beneficial to ensure a consistent render order.
     $: viewAnalyses = [...allAnalyses].sort((a, b) => {
         const isAFullWidth = a.layout === 'full-width';
         const isBFullWidth = b.layout === 'full-width';
@@ -27,7 +22,6 @@
         return isAFullWidth ? 1 : -1;
     });
     
-    // Style override for fixed column count
     $: gridStyle = maxColumns ? `grid-template-columns: repeat(${maxColumns}, 1fr);` : '';
 
     function handleUpdate(event, id) {
@@ -49,7 +43,7 @@
             <svelte:component
                 this={analysis.component}
                 {...analysis.props}
-                {...analysis.getData($dataStore, $scenarioStore)}
+                {...analysis.getData($dataStore, $scenarioStore.workingState)}
                 on:update={(e) => handleUpdate(e, analysis.id)}
             />
         </AnalysisBox>

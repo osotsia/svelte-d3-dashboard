@@ -7,13 +7,9 @@
     import AnalysisBox from '../components/ui/AnalysisBox.svelte';
 
     // --- STATE & CALCULATIONS ---
-    $: currentParameters = $scenarioStore.currentScenario.parameters || {};
+    $: currentParameters = $scenarioStore.workingState.parameters || {};
     $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
     
-    // Bind narrative text directly to the store's current scenario
-    let narrativeText = '';
-    $: narrativeText = $scenarioStore.currentScenario.narrative || '';
-
     // --- EVENT HANDLERS ---
     function handleSliderInput(event, key) {
         const newParams = { ...currentParameters, [key]: event.detail.value };
@@ -22,20 +18,17 @@
     function handleNarrativeInput(event) {
         scenarioStore.setNarrative(event.target.value);
     }
-    // Specific handler for updates from the PCP component, as it's the only one with interactive state
     function handlePcpUpdate(event) {
         scenarioStore.setPcpSelections(event.detail);
     }
     
     // --- PINNING LOGIC ---
-    // Derives a list of full analysis configurations based on the IDs stored in the scenario.
-    $: pinnedAnalyses = ($scenarioStore.currentScenario.pinned || [])
+    $: pinnedAnalyses = ($scenarioStore.workingState.pinned || [])
         .map(item => {
             const config = analyses[item.id];
-            // Merge the stored item (id, title) with its full configuration from the registry
             return config ? { ...item, ...config } : null;
         })
-        .filter(Boolean); // Filter out any nulls if an ID was not found in the registry
+        .filter(Boolean);
 
 </script>
 
@@ -81,7 +74,7 @@
         <h2 class="panel-title">Analyst's Narrative</h2>
         <textarea 
             placeholder="Summarize findings, context, and recommendations here..."
-            bind:value={narrativeText}
+            value={$scenarioStore.workingState.narrative || ''}
             on:input={handleNarrativeInput}
         ></textarea>
     </div>
@@ -103,7 +96,7 @@
                        <svelte:component
                             this={analysis.component}
                             {...analysis.props}
-                            {...analysis.getData($dataStore, $scenarioStore)}
+                            {...analysis.getData($dataStore, $scenarioStore.workingState)}
                             on:update={analysis.id === 'pcp' ? handlePcpUpdate : null}
                        />
                     </AnalysisBox>
@@ -112,9 +105,8 @@
         {/if}
     </div>
 </div>
-
+<!-- styles remain the same -->
 <style>
-    /* styles remain the same */
     .report-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--spacing-unit); }
     .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: var(--spacing-unit); box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .panel-title { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--header-color); }
