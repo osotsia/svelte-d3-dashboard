@@ -9,18 +9,20 @@
     export let format = (v) => v.toLocaleString();
 
     const dispatch = createEventDispatcher();
-
-    function onInput(event) {
-        value = Number(event.target.value);
-        dispatch('input', { value: value });
-    }
 </script>
 
 <div class="slider-group">
     <label>
         {label}: <span class="slider-value">{format(value)}</span>
     </label>
-    <input type="range" {min} {max} {step} bind:value={value} on:input={onInput} />
+    <input 
+        type="range" 
+        {min} 
+        {max} 
+        {step} 
+        value={value} 
+        on:input={(event) => dispatch('input', { value: Number(event.target.value) })} 
+    />
 </div>
 
 <style>

@@ -45,26 +45,29 @@ function createScenarioStore() {
         },
 
         // --- State Modifiers ---
-        setParameters: (params) => update(s => {
-            s.workingState.parameters = params;
-            s.isDirty = true;
-            return s;
-        }),
-        setNarrative: (narrative) => update(s => {
-            s.workingState.narrative = narrative;
-            s.isDirty = true;
-            return s;
-        }),
-        setPinnedItems: (pinnedItems) => update(s => {
-            s.workingState.pinned = pinnedItems;
-            s.isDirty = true;
-            return s;
-        }),
-        setPcpSelections: (selections) => update(s => {
-            s.workingState.pcpSelections = selections;
-            s.isDirty = true;
-            return s;
-        }),
+        setParameters: (params) => update(s => ({
+            ...s,
+            workingState: { ...s.workingState, parameters: params },
+            isDirty: true
+        })),
+
+        setNarrative: (narrative) => update(s => ({
+            ...s,
+            workingState: { ...s.workingState, narrative: narrative },
+            isDirty: true
+        })),
+
+        setPinnedItems: (pinnedItems) => update(s => ({
+            ...s,
+            workingState: { ...s.workingState, pinned: pinnedItems },
+            isDirty: true
+        })),
+
+        setPcpSelections: (selections) => update(s => ({
+            ...s,
+            workingState: { ...s.workingState, pcpSelections: selections },
+            isDirty: true
+        })),
 
         // --- Scenario Actions ---
         newScenario: () => update(s => {
