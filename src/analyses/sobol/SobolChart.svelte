@@ -11,7 +11,7 @@
     
     let width = 600;
     let height = 400;
-    const margin = { top: 40, right: 20, bottom: 60, left: 120 };
+    const margin = { top: 20, right: 20, bottom: 60, left: 120 };
     let svgEl, xAxisG, yAxisG;
 
     $: innerWidth = width - margin.left - margin.right;
@@ -45,14 +45,6 @@
 </script>
 
 <div class="chart-container">
-    <div class="legend">
-        {#each xKeys as key}
-        <div class="legend-item">
-            <span class="legend-color" style="background-color: {colorScale(key)}"></span>
-            {key === 'S1' ? 'S1 (First-order)' : 'ST (Total-order)'}
-        </div>
-        {/each}
-    </div>
     <svg bind:this={svgEl} {width} {height} viewBox="0 0 {width} {height}" style="max-width: 100%;">
         <g transform="translate({margin.left}, {margin.top})">
             <g bind:this={xAxisG} transform="translate(0, {innerHeight})" class="axis x-axis"></g>
@@ -64,7 +56,13 @@
                         {@const value = d[key]}
                         {@const conf = d[confKey]}
                         {@const barY = yInnerScale(key)}
-                        <rect x={xScale(0)} y={barY} width={xScale(value)} height={yInnerScale.bandwidth()} fill={colorScale(key)}>
+                        <rect 
+                            class="bar"
+                            x={xScale(0)} 
+                            y={barY} 
+                            width={xScale(value)} 
+                            height={yInnerScale.bandwidth()} 
+                            fill={colorScale(key)}>
                             <title>{key}: {value.toFixed(3)} ± {conf.toFixed(3)}</title>
                         </rect>
                         {@const errorY = barY + yInnerScale.bandwidth() / 2}
@@ -77,11 +75,30 @@
             <text class="axis-label" x={innerWidth / 2} y={innerHeight + 45} text-anchor="middle">{xLabel}</text>
         </g>
     </svg>
+    <div class="legend">
+        {#each xKeys as key}
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: {colorScale(key)}"></span>
+            {key === 'S1' ? 'S1 (First-order)' : 'ST (Total-order)'}
+        </div>
+        {/each}
+    </div>
 </div>
 
 <style>
-    .chart-container { position: relative; }
-    .legend { display: flex; gap: 1rem; margin-bottom: 0.5rem; justify-content: center; font-size: 0.9em; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); }
+    .chart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    .legend {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        justify-content: center;
+        font-size: 0.9em;
+    }
     .legend-item { display: flex; align-items: center; gap: 0.4rem; }
     .legend-color { width: 14px; height: 14px; border-radius: 2px; }
     .axis.x-axis :global(.tick line) { stroke: var(--border-color); stroke-dasharray: 2,2; }
@@ -89,4 +106,10 @@
     .axis.y-axis :global(.domain) { stroke: var(--text-color); }
     .error-line, .error-tick { stroke: #333; stroke-width: 1.5px; }
     .axis-label { font-size: 0.9rem; font-weight: 500; fill: var(--text-color-light); }
+    .bar {
+        transition: filter 0.2s ease-in-out;
+    }
+    .bar:hover {
+        filter: brightness(85%);
+    }
 </style>

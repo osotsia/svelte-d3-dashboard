@@ -12,8 +12,12 @@ export default {
         confKeys: ['S1_conf', 'ST_conf'],
         xLabel: 'Sobol Index Value'
     },
-    // FIX: Standardized function signature
-    getData: ($dataStore, $workingState) => ({
-        data: $dataStore.sobol?.indices || []
-    })
+    getData: ($dataStore, $workingState) => {
+        const data = $dataStore.sobol?.indices || [];
+        // Sort data by the total-order index (ST) in descending order for clearer visualization.
+        const sortedData = [...data].sort((a, b) => b.ST - a.ST);
+        return {
+            data: sortedData
+        };
+    }
 };
