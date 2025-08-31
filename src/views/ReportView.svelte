@@ -69,7 +69,7 @@
         <h2 class="panel-title">Model Calculator</h2>
         <div class="lcoh-result-box">
             <span>Levelized Cost of Heat (LCOH)</span>
-            <span class="lcoh-value">${lcohResult.toFixed(2)} <span class="lcoh-unit">/ MWh</span></span>
+            <span class="lcoh-value">{lcohResult.toFixed(2)}</span>
         </div>
         
         {#each Object.entries(parameterRanges) as [key, config]}
