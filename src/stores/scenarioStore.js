@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { activeView } from './viewStore.js';
 
 const LOCAL_STORAGE_KEY = 'workbenchScenarios';
 
@@ -50,19 +51,16 @@ function createScenarioStore() {
             workingState: { ...s.workingState, parameters: params },
             isDirty: true
         })),
-
         setNarrative: (narrative) => update(s => ({
             ...s,
             workingState: { ...s.workingState, narrative: narrative },
             isDirty: true
         })),
-
         setPinnedItems: (pinnedItems) => update(s => ({
             ...s,
             workingState: { ...s.workingState, pinned: pinnedItems },
             isDirty: true
         })),
-
         setPcpSelections: (selections) => update(s => ({
             ...s,
             workingState: { ...s.workingState, pcpSelections: selections },
@@ -74,6 +72,7 @@ function createScenarioStore() {
             if (s.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
                 return s;
             }
+            activeView.set('Report');
             return {
                 ...s,
                 workingState: JSON.parse(JSON.stringify(_defaultScenario)),
@@ -93,6 +92,7 @@ function createScenarioStore() {
                 pcpSelections: {},
                 ...s.scenarios[name]
             };
+            activeView.set('Report');
             return {
                 ...s,
                 workingState: JSON.parse(JSON.stringify(loadedScenario)),
@@ -108,6 +108,7 @@ function createScenarioStore() {
             const newScenarios = { ...s.scenarios, [trimmedName]: s.workingState };
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
             
+            activeView.set('Report');
             return {
                 ...s,
                 scenarios: newScenarios,
@@ -121,23 +122,20 @@ function createScenarioStore() {
                 return s; // Abort, no state change
             }
 
-            // Create a new object for the scenarios to ensure immutability
             const newScenarios = { ...s.scenarios };
             delete newScenarios[name];
             
-            // Persist the change to localStorage
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
 
-            // Create a new state object to return
             const newState = { ...s, scenarios: newScenarios };
 
-            // If the deleted scenario was the active one, reset the working state
             if (s.activeScenarioName === name) {
                 newState.workingState = JSON.parse(JSON.stringify(_defaultScenario));
                 newState.activeScenarioName = null;
                 newState.isDirty = false;
             }
-
+            
+            activeView.set('Report');
             return newState;
         }),
     };
