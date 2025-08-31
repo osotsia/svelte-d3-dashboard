@@ -11,7 +11,7 @@
     
     let width = 600;
     let height = 400;
-    const margin = { top: 20, right: 20, bottom: 60, left: 120 };
+    const margin = { top: 10, right: 20, bottom: 60, left: 120 };
     let svgEl, xAxisG, yAxisG;
 
     $: innerWidth = width - margin.left - margin.right;
@@ -38,9 +38,9 @@
 
     $: if (xAxisG && yAxisG) {
         const xAxis = d3.axisBottom(xScale).ticks(5).tickSize(-innerHeight);
-        d3.select(xAxisG).call(xAxis).selectAll('.tick text').style('font-size', '0.9rem');
+        d3.select(xAxisG).call(xAxis).selectAll('.tick text').style('font-size', '0.8rem');
         const yAxis = d3.axisLeft(yScale);
-        d3.select(yAxisG).call(yAxis).selectAll('.tick text').style('font-size', '0.9rem');
+        d3.select(yAxisG).call(yAxis).selectAll('.tick text').style('font-size', '0.8rem');
     }
 </script>
 
@@ -73,34 +73,24 @@
                 </g>
             {/each}
             <text class="axis-label" x={innerWidth / 2} y={innerHeight + 45} text-anchor="middle">{xLabel}</text>
+            
+            <g class="svg-legend" transform="translate({innerWidth - 150}, {innerHeight - 60})">
+                <rect class="legend-bg" width="140" height="50" rx="4"></rect>
+                {#each xKeys as key, i}
+                    <g transform="translate(10, {15 + i * 20})">
+                        <rect x="0" y="-8" width="12" height="12" fill={colorScale(key)}></rect>
+                        <text x="18" y="0" class="legend-text">
+                            {key === 'S1' ? 'S1 (First-order)' : 'ST (Total-order)'}
+                        </text>
+                    </g>
+                {/each}
+            </g>
         </g>
     </svg>
-    <div class="legend">
-        {#each xKeys as key}
-        <div class="legend-item">
-            <span class="legend-color" style="background-color: {colorScale(key)}"></span>
-            {key === 'S1' ? 'S1 (First-order)' : 'ST (Total-order)'}
-        </div>
-        {/each}
-    </div>
 </div>
 
 <style>
-    .chart-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-    }
-    .legend {
-        display: flex;
-        gap: 1rem;
-        margin-top: 0.75rem;
-        justify-content: center;
-        font-size: 0.9em;
-    }
-    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
-    .legend-color { width: 14px; height: 14px; border-radius: 2px; }
+    .chart-container { width: 100%; }
     .axis.x-axis :global(.tick line) { stroke: var(--border-color); stroke-dasharray: 2,2; }
     .axis.x-axis :global(.domain) { display: none; }
     .axis.y-axis :global(.domain) { stroke: var(--text-color); }
@@ -111,5 +101,15 @@
     }
     .bar:hover {
         filter: brightness(85%);
+    }
+    .legend-bg {
+        fill: var(--panel-bg);
+        stroke: var(--border-color);
+        fill-opacity: 0.85;
+    }
+    .legend-text {
+        font-size: 0.8rem;
+        fill: var(--text-color);
+        dominant-baseline: middle;
     }
 </style>
