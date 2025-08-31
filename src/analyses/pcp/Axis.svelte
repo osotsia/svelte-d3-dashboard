@@ -49,12 +49,20 @@
 
 <g bind:this={gElement} {...$$restProps}>
     <text
+        class="axis-label"
         x={scale.range()[0]}
-        y={-8}
+        y={-10} 
         text-anchor="start"
         fill="currentColor"
-        font-weight="bold"
     >
         {pcpKey}
     </text>
 </g>
+
+<!-- Add this style block -->
+<style>
+    .axis-label {
+        font-size: var(--font-size-pcp-label);
+        font-weight: bold;
+    }
+</style>

@@ -8,6 +8,7 @@
     --active-color: #e7f1ff;
     --active-border: #007bff;
     --spacing-unit: 1.5rem;
+    --font-size-pcp-label: 0.8rem; 
 }
 
 body {
