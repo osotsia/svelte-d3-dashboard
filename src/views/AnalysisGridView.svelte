@@ -4,10 +4,6 @@
 
     export let analyses = [];
     export let maxColumns = null;
-
-    $: nonFullWidthCount = analyses.filter(a => a.layout !== 'full-width').length;
-    $: hasFullWidthItems = analyses.some(a => a.layout === 'full-width');
-    $: isThinLayoutScenario = nonFullWidthCount === 1 && hasFullWidthItems;
     
     $: gridStyle = maxColumns ? `grid-template-columns: repeat(${maxColumns}, 1fr);` : '';
 
@@ -32,12 +28,11 @@
 
 <div class="view-container" style={gridStyle}>
     {#each analyses as analysis (analysis.id)}
-        {@const effectiveLayout = isThinLayoutScenario && analysis.layout !== 'full-width' ? 'full-width' : analysis.layout}
         {@const isPinned = $scenarioStore.workingState.pinned.some(p => p.id === analysis.id)}
         <AnalysisBox
             id={analysis.id}
             title={analysis.title}
-            layout={effectiveLayout}
+            layout={analysis.layout}
             explanation={analysis.explanation}
             isPinned={isPinned}
             on:togglePin={handleTogglePin}
@@ -54,7 +49,8 @@
 <style>
     .view-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        /* Changed auto-fit to auto-fill to prevent single items from stretching */
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
         gap: var(--spacing-unit);
     }
     :global(.view-container > .full-width) {

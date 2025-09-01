@@ -5,7 +5,8 @@
     import { technoEconomicModel, parameterRanges } from '../lib/model.js';
     import { analysisMappers } from '../lib/analysisMappers.js';
     import Slider from '../components/ui/Slider.svelte';
-    import AnalysisBox from '../components/ui/AnalysisBox.svelte';
+    // Import the reusable grid view component
+    import AnalysisGridView from './AnalysisGridView.svelte';
 
     // --- STATE & CALCULATIONS ---
     $: currentParameters = $scenarioStore.workingState.parameters || {};
@@ -18,15 +19,6 @@
     }
     function handleNarrativeInput(event) {
         scenarioStore.setNarrative(event.target.value);
-    }
-    function handlePcpUpdate(event) {
-        scenarioStore.setPcpSelections(event.detail);
-    }
-    function handleTogglePin(event) {
-        const { id } = event.detail;
-        const currentPins = $scenarioStore.workingState.pinned || [];
-        const newPins = currentPins.filter(item => item.id !== id);
-        scenarioStore.setPinnedItems(newPins);
     }
     
     // --- PINNING LOGIC ---
@@ -101,24 +93,8 @@
         {#if pinnedAnalyses.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
-            <div class="pinned-items-grid">
-                {#each pinnedAnalyses as analysis (analysis.id)}
-                    <AnalysisBox
-                        id={analysis.id}
-                        title={analysis.title}
-                        layout={analysis.layout}
-                        explanation={analysis.explanation}
-                        isPinned={true}
-                        on:togglePin={handleTogglePin}
-                    >
-                       <svelte:component
-                            this={analysis.component}
-                            {...analysis.props}
-                            on:update={analysis.id === 'pcp' ? handlePcpUpdate : null}
-                       />
-                    </AnalysisBox>
-                {/each}
-            </div>
+            <!-- Use the reusable AnalysisGridView component -->
+            <AnalysisGridView analyses={pinnedAnalyses} />
         {/if}
     </div>
 </div>
@@ -134,8 +110,7 @@
     .lcoh-value { font-size: 2rem; font-weight: 600; color: var(--header-color); }
     .lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
-    .pinned-items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: var(--spacing-unit); }
-    :global(.pinned-items-grid > .full-width) { grid-column: 1 / -1; }
+    /* REMOVED .pinned-items-grid and its :global rule as they are no longer needed */
     .placeholder { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-color-light); background-color: var(--bg-color); border-radius: 6px; text-align: center; padding: 1rem; }
     @media (max-width: 1200px) { .model-panel, .controls-panel, .narrative-panel { grid-column: 1 / -1; } }
 </style>
