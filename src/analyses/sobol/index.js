@@ -5,7 +5,7 @@ export default {
     title: 'Sobol Indices (True Model)',
     component: BarChart,
     layout: 'default',
-    explanation: 'Sobol indices measure sensitivity, i.e. how much of the output variance is dependent on each input parameter, separating direct effects (S1) from total effects including interactions (ST).',
+    explanation: 'Sobol indices measure sensitivity, i.e. how much the output variance dependents on each input parameter, separating direct effects (S1) from total effects including interactions (ST).',
     props: {
         yKey: 'param',
         xKeys: ['S1', 'ST'],
