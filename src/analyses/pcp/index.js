@@ -5,7 +5,7 @@ export default {
     title: 'Parallel Coordinates Plot',
     component: ParallelCoordinatesPlot,
     layout: 'full-width',
-    explanation: 'This interactive plot shows relationships between model inputs and a single output. Each line represents one model run, allowing for visual filtering and correlation analysis.',
+    explanation: 'This interactive plot shows relationships between model inputs and LCOH. Each line represents one model run, allowing for visual filtering and correlation analysis.',
     props: {
         colorKey: 'LCOH'
     },
