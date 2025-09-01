@@ -5,12 +5,13 @@
     import { technoEconomicModel, parameterRanges } from '../lib/model.js';
     import Slider from '../components/ui/Slider.svelte';
     // Import the new and updated components
-    import AnalysisGridView from './AnalysisGridView.svelte';
+    import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
     import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
 
     // --- STATE & CALCULATIONS ---
     $: currentParameters = $scenarioStore.workingState.parameters || {};
-    $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
+   // @ts-ignore
+     $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
     
     // --- EVENT HANDLERS ---
     function handleSliderInput(event, key) {
@@ -78,11 +79,11 @@
         {#if !$scenarioStore.workingState.pinned || $scenarioStore.workingState.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
-            <AnalysisGridView>
+            <AnalysisGrid>
                 {#each $scenarioStore.workingState.pinned as pinnedItem (pinnedItem.id)}
                     <AnalysisLoader id={pinnedItem.id} />
                 {/each}
-            </AnalysisGridView>
+            </AnalysisGrid>
         {/if}
     </div>
 </div>
@@ -96,7 +97,7 @@
     .narrative-panel, .pinned-items-panel { grid-column: 1 / -1; }
     .lcoh-result-box { background-color: var(--bg-color); border-radius: 6px; padding: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
     .lcoh-value { font-size: 2rem; font-weight: 600; color: var(--header-color); }
-    .lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }
+    /*.lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }*/
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
     .placeholder { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-color-light); background-color: var(--bg-color); border-radius: 6px; text-align: center; padding: 1rem; }
     @media (max-width: 1200px) { .model-panel, .controls-panel, .narrative-panel { grid-column: 1 / -1; } }

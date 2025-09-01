@@ -1,5 +1,5 @@
 <script>
-    import AnalysisGridView from './AnalysisGridView.svelte';
+    import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
     import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
     import { analyses } from '../analyses/index.js';
 
@@ -14,8 +14,8 @@
     });
 </script>
 
-<AnalysisGridView>
+<AnalysisGrid>
     {#each sortedAnalysisIds as id (id)}
         <AnalysisLoader {id} />
     {/each}
-</AnalysisGridView>
+</AnalysisGrid>
