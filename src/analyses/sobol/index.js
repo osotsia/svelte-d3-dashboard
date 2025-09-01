@@ -19,5 +19,10 @@ export default {
             'S1': 'S1_conf',
             'ST': 'ST_conf'
         }
+    },
+    mapper: ($dataStore, $workingState) => {
+        const data = $dataStore.sobol?.indices || [];
+        const sortedData = [...data].sort((a, b) => b.ST - a.ST);
+        return { data: sortedData };
     }
 };

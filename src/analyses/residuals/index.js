@@ -11,5 +11,8 @@ export default {
         yKey: 'residual',
         xLabel: 'Fitted LCOH Values',
         yLabel: 'LCOH Residuals'
-    }
+    },
+    mapper: ($dataStore, $workingState) => ({
+        data: $dataStore.residuals?.data || []
+    })
 };

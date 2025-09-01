@@ -3,10 +3,10 @@
     import { scenarioStore } from '../stores/scenarioStore.js';
     import { dataStore } from '../stores/dataStore.js';
     import { technoEconomicModel, parameterRanges } from '../lib/model.js';
-    import { analysisMappers } from '../lib/analysisMappers.js';
     import Slider from '../components/ui/Slider.svelte';
-    // Import the reusable grid view component
+    // Import the new and updated components
     import AnalysisGridView from './AnalysisGridView.svelte';
+    import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
 
     // --- STATE & CALCULATIONS ---
     $: currentParameters = $scenarioStore.workingState.parameters || {};
@@ -22,26 +22,11 @@
     }
     
     // --- PINNING LOGIC ---
-    $: pinnedAnalyses = ($scenarioStore.workingState.pinned || [])
-        .map(pinnedItem => {
-            const staticConfig = analyses[pinnedItem.id];
-            if (!staticConfig) return null;
-
-            const dynamicProps = analysisMappers[pinnedItem.id]
-                ? analysisMappers[pinnedItem.id]($dataStore, $scenarioStore.workingState)
-                : {};
-
-            return {
-                ...staticConfig,
-                props: { ...staticConfig.props, ...dynamicProps }
-            };
-        })
-        .filter(Boolean);
-
+    // The large reactive block for `pinnedAnalyses` has been removed.
 </script>
 
 <div class="report-grid">
-    <!-- Model Details Panel -->
+    <!-- Model Details Panel (unchanged) -->
     <div class="panel model-panel">
         <h2 class="panel-title">Model Details</h2>
         <div class="model-explanation">
@@ -56,7 +41,7 @@
         </div>
     </div>
 
-    <!-- LCOH Calculator Panel -->
+    <!-- LCOH Calculator Panel (unchanged) -->
     <div class="panel controls-panel">
         <h2 class="panel-title">Model Calculator</h2>
         <div class="lcoh-result-box">
@@ -77,7 +62,7 @@
         {/each}
     </div>
 
-    <!-- Analyst's Narrative Panel -->
+    <!-- Analyst's Narrative Panel (unchanged) -->
     <div class="panel narrative-panel">
         <h2 class="panel-title">Analyst's Narrative</h2>
         <textarea 
@@ -87,14 +72,17 @@
         ></textarea>
     </div>
 
-    <!-- Pinned Items Panel -->
+    <!-- Pinned Items Panel (updated) -->
     <div class="panel pinned-items-panel">
         <h2 class="panel-title">Pinned Analyses</h2>
-        {#if pinnedAnalyses.length === 0}
+        {#if !$scenarioStore.workingState.pinned || $scenarioStore.workingState.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
-            <!-- Use the reusable AnalysisGridView component -->
-            <AnalysisGridView analyses={pinnedAnalyses} />
+            <AnalysisGridView>
+                {#each $scenarioStore.workingState.pinned as pinnedItem (pinnedItem.id)}
+                    <AnalysisLoader id={pinnedItem.id} />
+                {/each}
+            </AnalysisGridView>
         {/if}
     </div>
 </div>
@@ -110,7 +98,6 @@
     .lcoh-value { font-size: 2rem; font-weight: 600; color: var(--header-color); }
     .lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
-    /* REMOVED .pinned-items-grid and its :global rule as they are no longer needed */
     .placeholder { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-color-light); background-color: var(--bg-color); border-radius: 6px; text-align: center; padding: 1rem; }
     @media (max-width: 1200px) { .model-panel, .controls-panel, .narrative-panel { grid-column: 1 / -1; } }
 </style>

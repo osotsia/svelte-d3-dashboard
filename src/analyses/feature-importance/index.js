@@ -12,5 +12,8 @@ export default {
         xLabel: 'Importance (Gain)',
         yLabel: 'Parameter',
         showLegend: false // Explicitly disable legend
-    }
+    },
+    mapper: ($dataStore, $workingState) => ({
+        data: $dataStore['feature-importance']?.data || []
+    })
 };
