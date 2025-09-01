@@ -2,7 +2,7 @@ import ResidualsPlot from './ResidualsPlot.svelte';
 
 export default {
     id: 'residuals',
-    title: 'Residuals vs. Fitted (XGBoost)',
+    title: 'Residuals vs. Fitted (Surrogate)',
     component: ResidualsPlot,
     layout: 'default',
     explanation: 'Residuals are the errors between the surrogate model\'s predictions and the true model\'s outputs. A random, patternless scatter indicates a well-fitted model.',
