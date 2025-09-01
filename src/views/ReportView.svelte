@@ -1,29 +1,14 @@
 <script>
-    import { analyses } from '../analyses/index.js';
     import { scenarioStore } from '../stores/scenarioStore.js';
-    import { dataStore } from '../stores/dataStore.js';
-    import { technoEconomicModel, parameterRanges } from '../lib/model.js';
-    import Slider from '../components/ui/Slider.svelte';
     // Import the new and updated components
     import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
     import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
+    import Calculator from '../components/ui/ModelCalculator.svelte';
 
-    // --- STATE & CALCULATIONS ---
-    $: currentParameters = $scenarioStore.workingState.parameters || {};
-   // @ts-ignore
-     $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
-    
     // --- EVENT HANDLERS ---
-    function handleSliderInput(event, key) {
-        const newParams = { ...currentParameters, [key]: event.detail.value };
-        scenarioStore.setParameters(newParams);
-    }
     function handleNarrativeInput(event) {
         scenarioStore.setNarrative(event.target.value);
     }
-    
-    // --- PINNING LOGIC ---
-    // The large reactive block for `pinnedAnalyses` has been removed.
 </script>
 
 <div class="report-grid">
@@ -42,28 +27,12 @@
         </div>
     </div>
 
-    <!-- LCOH Calculator Panel (unchanged) -->
+    <!-- LCOH Calculator Panel -->
     <div class="panel controls-panel">
-        <h2 class="panel-title">Model Calculator</h2>
-        <div class="lcoh-result-box">
-            <span>Levelized Cost of Heat (LCOH)</span>
-            <span class="lcoh-value">{lcohResult.toFixed(2)}</span>
-        </div>
-        
-        {#each Object.entries(parameterRanges) as [key, config]}
-            <Slider
-                label={key.replace(/_/g, ' ')}
-                min={config.min}
-                max={config.max}
-                step={config.step}
-                value={currentParameters[key]}
-                on:input={(e) => handleSliderInput(e, key)}
-                format={(v) => v.toLocaleString(undefined, { maximumFractionDigits: key === 'efficiency' || key === 'interest_rate' ? 3 : 0 })}
-            />
-        {/each}
+        <Calculator />
     </div>
 
-    <!-- Analyst's Narrative Panel (unchanged) -->
+    <!-- Analyst's Narrative Panel -->
     <div class="panel narrative-panel">
         <h2 class="panel-title">Analyst's Narrative</h2>
         <textarea 
@@ -73,7 +42,7 @@
         ></textarea>
     </div>
 
-    <!-- Pinned Items Panel (updated) -->
+    <!-- Pinned Items Panel -->
     <div class="panel pinned-items-panel">
         <h2 class="panel-title">Pinned Analyses</h2>
         {#if !$scenarioStore.workingState.pinned || $scenarioStore.workingState.pinned.length === 0}
@@ -87,7 +56,8 @@
         {/if}
     </div>
 </div>
-<!-- styles remain the same -->
+
+
 <style>
     .report-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--spacing-unit); }
     .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: var(--spacing-unit); box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
@@ -95,10 +65,13 @@
     .model-panel { grid-column: 1 / span 5; }
     .controls-panel { grid-column: 6 / span 7; }
     .narrative-panel, .pinned-items-panel { grid-column: 1 / -1; }
-    .lcoh-result-box { background-color: var(--bg-color); border-radius: 6px; padding: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .lcoh-value { font-size: 2rem; font-weight: 600; color: var(--header-color); }
-    /*.lcoh-unit { font-size: 1.2rem; font-weight: 400; color: var(--text-color-light); }*/
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
     .placeholder { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-color-light); background-color: var(--bg-color); border-radius: 6px; text-align: center; padding: 1rem; }
-    @media (max-width: 1200px) { .model-panel, .controls-panel, .narrative-panel { grid-column: 1 / -1; } }
+    @media (max-width: 1200px) { 
+        .model-panel, 
+        .controls-panel, 
+        .narrative-panel { 
+            grid-column: 1 / -1; 
+        } 
+    }
 </style>
