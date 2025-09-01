@@ -1,15 +1,23 @@
-import SobolChart from './SobolChart.svelte';
+import BarChart from '../../components/ui/BarChart.svelte';
 
 export default {
     id: 'sobol',
     title: 'Sobol Indices (True Model)',
-    component: SobolChart,
+    component: BarChart,
     layout: 'default',
     explanation: 'Sobol indices measure sensitivity, i.e. how much of the output variance is dependent on each input parameter, separating direct effects (S1) from total effects including interactions (ST).',
     props: {
         yKey: 'param',
         xKeys: ['S1', 'ST'],
-        confKeys: ['S1_conf', 'ST_conf'],
-        xLabel: 'Sobol Index Value'
+        xLabel: 'Sobol Index Value',
+        showLegend: true, // Enable the legend
+        legendLabels: { // Provide descriptive labels
+            'S1': 'S1 (First-order)',
+            'ST': 'ST (Total-order)'
+        },
+        errorBarKeys: { // Map value keys to confidence keys
+            'S1': 'S1_conf',
+            'ST': 'ST_conf'
+        }
     }
 };

@@ -1,15 +1,16 @@
-import FeatureImportanceChart from './FeatureImportanceChart.svelte';
+import BarChart from '../../components/ui/BarChart.svelte';
 
 export default {
     id: 'feature-importance',
     title: 'Feature Importance (XGBoost)',
-    component: FeatureImportanceChart,
+    component: BarChart,
     layout: 'default',
     explanation: 'This chart ranks input parameters by their contribution to the surrogate model\'s predictions, indicating which factors the model relies on most.',
     props: {
-        xKey: 'importance',
+        xKeys: ['importance'], // Use the new xKeys array
         yKey: 'feature',
         xLabel: 'Importance (Gain)',
-        yLabel: 'Parameter'
+        yLabel: 'Parameter',
+        showLegend: false // Explicitly disable legend
     }
 };
