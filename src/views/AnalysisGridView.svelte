@@ -49,8 +49,7 @@
 <style>
     .view-container {
         display: grid;
-        /* Changed auto-fit to auto-fill to prevent single items from stretching */
-        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(550px, 1fr)); /* Changed 450px to 550px */
         gap: var(--spacing-unit);
     }
     :global(.view-container > .full-width) {
