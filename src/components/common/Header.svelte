@@ -2,7 +2,7 @@
     import { activeView } from '../../stores/viewStore.js';
     import ScenarioManager from './ScenarioManager.svelte';
 
-    const views = ['Report', 'Key Drivers', 'Surrogate Model'];
+    const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];
 </script>
 
 <header class="app-header">

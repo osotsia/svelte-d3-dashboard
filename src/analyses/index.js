@@ -3,6 +3,7 @@ import pcp from './pcp/index.js';
 import featureImportance from './feature-importance/index.js';
 import residuals from './residuals/index.js';
 import modelCard from './model-card/index.js';
+import { staticData } from './static_data.js';
 
 /**
  * A central registry of all available analyses in the application.
@@ -13,5 +14,6 @@ export const analyses = {
     'pcp': pcp,
     'feature-importance': featureImportance,
     'residuals': residuals,
-    'model-card': modelCard
+    'model-card': modelCard,
+    ...staticData
 };

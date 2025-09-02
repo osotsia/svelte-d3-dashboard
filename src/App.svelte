@@ -8,11 +8,13 @@
     import ReportView from './views/ReportView.svelte';
     import KeyDriversView from './views/KeyDriversView.svelte';
     import SurrogateModelView from './views/SurrogateModelView.svelte';
+    import DataView from './views/DataView.svelte';
 
     const viewComponents = {
         'Report': ReportView,
         'Key Drivers': KeyDriversView,
-        'Surrogate Model': SurrogateModelView
+        'Surrogate Model': SurrogateModelView,
+        'Data': DataView
     };
 
     onMount(() => {
