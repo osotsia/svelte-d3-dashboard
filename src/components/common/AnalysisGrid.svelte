@@ -1,21 +1,26 @@
 <script>
-    export let maxColumns = null;
-    
-    $: gridStyle = maxColumns ? `grid-template-columns: repeat(${maxColumns}, 1fr);` : '';
+    // The maxColumns prop is no longer necessary as this behavior is now the default.
 </script>
 
-<div class="view-container" style={gridStyle}>
+<div class="view-container">
     <slot></slot>
 </div>
 
 <style>
     .view-container {
         display: grid;
-        /* Increased minmax to fix original squishing bug and prevent wrapping */
-        grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+        /* Default to a two-column layout that allows items to shrink. */
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-unit);
     }
-    /* Adjusted selector to work with slotted AnalysisBox components */
+
+    /* On smaller screens (e.g., portrait tablets and phones), switch to a single column. */
+    @media (max-width: 768px) {
+        .view-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
     :global(.view-container > .analysis-box.full-width) {
         grid-column: 1 / -1;
     }

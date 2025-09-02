@@ -5,7 +5,7 @@
     const analysisIds = ['model-card', 'feature-importance', 'residuals'];
 </script>
 
-<AnalysisGrid maxColumns={2}>
+<AnalysisGrid>
     {#each analysisIds as id (id)}
         <AnalysisLoader {id} />
     {/each}

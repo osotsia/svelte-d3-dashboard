@@ -67,7 +67,7 @@
     .narrative-panel, .pinned-items-panel { grid-column: 1 / -1; }
     textarea { width: 100%; height: 120px; resize: vertical; border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; }
     .placeholder { display: flex; align-items: center; justify-content: center; min-height: 200px; color: var(--text-color-light); background-color: var(--bg-color); border-radius: 6px; text-align: center; padding: 1rem; }
-    @media (max-width: 1200px) { 
+    @media (max-width: 1100px) { 
         .model-panel, 
         .controls-panel, 
         .narrative-panel { 
