@@ -57,9 +57,9 @@ export const staticData = {
         props: {
             headers: ['Technology', 'Fuel Price ($/MMBtu)', 'Carbon Tax ($/tonne)', 'Boiler Efficiency (%)', 'Boiler CAPEX ($/MWth)', 'Estimated LCOH ($/Unit)'],
             rows: [
-                ['Natural Gas Boiler', '3.50', '0', '85', '150,000', '350'],
-                ['Natural Gas Boiler (w/ Tax)', '3.50', '50', '85', '150,000', '480'],
-                ['Electric Resistance Boiler', '8.79', '0', '99', '100,000', '650']
+                ['Natural Gas Boiler', '3.50', '0', '85', '150,000', '850'],
+                ['Natural Gas Boiler (w/ Tax)', '3.50', '50', '85', '150,000', '980'],
+                ['Electric Resistance Boiler', '8.79', '0', '99', '100,000', '1150']
             ]
         }
     }
