@@ -1,4 +1,4 @@
-import ResidualsPlot from './ResidualsPlot.svelte';
+import ResidualsPlot from './ScatterPlot.svelte';
 
 export default {
     id: 'residuals',

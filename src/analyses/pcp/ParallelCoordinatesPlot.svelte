@@ -8,6 +8,33 @@
     export let colorKey = '';
     export let selections = {}; 
 
+    /**
+     * Transforms raw data into drawable paths with activity states.
+     * This is a pure function, making it predictable and testable.
+     * @param {Array<Object>} inputData - The raw data points.
+     * @param {Array<string>} dimensionKeys - The keys for each axis/dimension.
+     * @param {Map<string, [number, number]>} selectionsMap - The active brush selections.
+     * @param {string} colorDimensionKey - The key used for coloring active paths.
+     * @param {Function} lineGen - The D3 line generator.
+     * @param {Function} colorScale - The D3 color scale.
+     * @returns {Array<Object>} The processed data ready for rendering.
+     */
+    function processData(inputData, dimensionKeys, selectionsMap, colorDimensionKey, lineGen, colorScale) {
+        return inputData.map(d => {
+            const isActive = Array.from(selectionsMap).every(([key, [min, max]]) => {
+                const value = d[key];
+                return value >= min && value <= max;
+            });
+            return {
+                ...d,
+                path: lineGen(d3.cross(dimensionKeys, [d], (key, d) => [key, d[key]])),
+                stroke: isActive ? colorScale(d[colorDimensionKey]) : "#d1d1d1",
+                opacity: isActive ? 0.7 : 0.2,
+                isActive
+            };
+        }).sort((a, b) => a.isActive - b.isActive);
+    }
+
     const dispatch = createEventDispatcher();
     const margin = { top: 30, right: 10, bottom: 20, left: 10 };
     let width = 1100;
@@ -24,19 +51,8 @@
         .x(([key, value]) => x.get(key)(value))
         .y(([key]) => y(key));
 
-    $: pathData = data.map(d => {
-        const isActive = Array.from(selectionsMap).every(([key, [min, max]]) => {
-            const value = d[key];
-            return value >= min && value <= max;
-        });
-        return {
-            ...d,
-            path: lineGenerator(d3.cross(keys, [d], (key, d) => [key, d[key]])),
-            stroke: isActive ? color(d[colorKey]) : "#d1d1d1",
-            opacity: isActive ? 0.7 : 0.2,
-            isActive
-        };
-    }).sort((a, b) => a.isActive - b.isActive);
+    // The reactive block is now a clean, declarative call.
+    $: pathData = processData(data, keys, selectionsMap, colorKey, lineGenerator, color);
 
     function handleBrush(event) {
         const { key, extent } = event.detail;

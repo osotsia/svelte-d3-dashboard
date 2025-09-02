@@ -2,7 +2,25 @@
     import { onMount } from 'svelte';
     import * as d3 from 'd3';
 
-    // This component was previously ScatterPlot.svelte
+    /**
+     * Creates a D3 linear scale from data, with padding.
+     * @param {Array<Object>} data - The dataset.
+     * @param {string} key - The key to access data for the domain.
+     * @param {[number, number]} range - The pixel range of the scale.
+     * @param {number} [padding=0.05] - The percentage of padding to add to the domain.
+     * @returns {d3.scaleLinear<number, number>} The configured D3 scale.
+     */
+    function createPaddedScale(data, key, range, padding = 0.05) {
+        if (!data || data.length === 0) {
+            return d3.scaleLinear().domain([0, 1]).range(range);
+        }
+        const [min, max] = d3.extent(data, d => d[key]);
+        const domainPadding = (max - min) * padding;
+        return d3.scaleLinear()
+            .domain([min - domainPadding, max + domainPadding])
+            .range(range);
+    }
+
     export let data = [];
     export let xKey = 'x';
     export let yKey = 'y';
@@ -17,17 +35,8 @@
     $: innerWidth = width - margin.left - margin.right;
     $: innerHeight = height - margin.top - margin.bottom;
 
-    $: xDomain = d3.extent(data, d => d[xKey]);
-    $: xPadding = (xDomain[1] - xDomain[0]) * 0.05;
-    $: xScale = d3.scaleLinear()
-        .domain([xDomain[0] - xPadding, xDomain[1] + xPadding])
-        .range([0, innerWidth]);
-
-    $: yDomain = d3.extent(data, d => d[yKey]);
-    $: yPadding = (yDomain[1] - yDomain[0]) * 0.05;
-    $: yScale = d3.scaleLinear()
-        .domain([yDomain[0] - yPadding, yDomain[1] + yPadding])
-        .range([innerHeight, 0]);
+    $: xScale = createPaddedScale(data, xKey, [0, innerWidth]);
+    $: yScale = createPaddedScale(data, yKey, [innerHeight, 0]);
 
     $: if (xAxisG && yAxisG) {
         const xAxis = d3.axisBottom(xScale).ticks(5);

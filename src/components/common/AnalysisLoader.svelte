@@ -29,9 +29,9 @@
     }
 
     function handleUpdate(event) {
-        // Currently, only the PCP component dispatches 'update' events
-        if (id === 'pcp') {
-            scenarioStore.setPcpSelections(event.detail);
+        // Generic handler: invokes updater if defined in the analysis config.
+        if (staticConfig?.updater) {
+            staticConfig.updater(event);
         }
     }
 </script>

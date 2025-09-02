@@ -1,4 +1,5 @@
 import ParallelCoordinatesPlot from './ParallelCoordinatesPlot.svelte';
+import { scenarioStore } from '../../stores/scenarioStore.js';
 
 export default {
     id: 'pcp',
@@ -13,5 +14,8 @@ export default {
         data: $dataStore.pcp?.data || [],
         keys: ($dataStore.pcp?.axes || []).map(axis => axis.name),
         selections: $workingState?.pcpSelections || {}
-    })
+    }),
+    updater: (event) => {
+        scenarioStore.setPcpSelections(event.detail);
+    }
 };
