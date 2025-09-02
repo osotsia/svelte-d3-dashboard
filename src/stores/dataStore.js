@@ -4,9 +4,9 @@ import { writable } from 'svelte/store';
 const mainPayload = {
     "model_card": {
         "model_type": "XGBoost Regressor",
-        "normalized_test_rmse": "0.1583%",
+        "Evaluation Speed": "0.3M evals/sec",
+        "normalized_test_rmse": "0.16%",
         "r2_score": "0.9999",
-        "raw_test_rmse": "2.9962",
         "training_time": "119.93 seconds",
         "test_samples": "200",
         "training_samples": "9,999,800",
