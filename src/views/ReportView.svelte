@@ -48,7 +48,7 @@
         {#if !$scenarioStore.workingState?.pinned || $scenarioStore.workingState?.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
-            <AnalysisGrid>
+            <AnalysisGrid class="allow-three-columns">
                 {#each $scenarioStore.workingState?.pinned as pinnedItem (pinnedItem.id)}
                     <AnalysisLoader id={pinnedItem.id} />
                 {/each}
