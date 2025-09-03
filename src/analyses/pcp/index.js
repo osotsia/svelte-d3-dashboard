@@ -16,6 +16,6 @@ export default {
         selections: $workingState?.pcpSelections || {}
     }),
     updater: (event) => {
-        scenarioStore.setPcpSelections(event.detail);
+        scenarioStore.updateWorkingState({ pcpSelections: event.detail });
     }
 };

@@ -4,6 +4,35 @@
 
     let scenariosList = [];
     $: scenariosList = Object.keys($scenarioStore.scenarios).sort();
+
+    function handleLoad(name) {
+        if ($scenarioStore.isDirty && !confirm(`You have unsaved changes. Discard them and load "${name}"?`)) {
+            return;
+        }
+        scenarioStore.loadScenario(name);
+    }
+
+    function handleNew() {
+        if ($scenarioStore.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
+            return;
+        }
+        scenarioStore.newScenario();
+    }
+
+    function handleSave() {
+        const name = prompt('Enter scenario name:', $scenarioStore.activeScenarioName || '');
+        if (name && name.trim()) {
+            scenarioStore.saveCurrentScenario(name.trim());
+        }
+    }
+
+    function handleDelete() {
+        const name = $scenarioStore.activeScenarioName;
+        if (!name) return;
+        if (confirm(`Are you sure you want to delete scenario "${name}"?`)) {
+            scenarioStore.deleteScenario(name);
+        }
+    }
 </script>
 
 <div class="scenario-manager">
@@ -12,7 +41,7 @@
             <button 
                 class="scenario-item" 
                 class:active={name === $scenarioStore.activeScenarioName} 
-                on:click={() => scenarioStore.loadScenario(name)}
+                on:click={() => handleLoad(name)}
             >
                 {name}
                 {#if name === $scenarioStore.activeScenarioName && $scenarioStore.isDirty}
@@ -22,13 +51,13 @@
         {/each}
     </div>
     <div class="scenario-controls">
-        <button on:click={() => scenarioStore.newScenario()} title="New Scenario">
+        <button on:click={handleNew} title="New Scenario">
             <Icon name="new"/>
         </button>
-        <button on:click={() => scenarioStore.saveCurrentScenario(prompt('Enter scenario name:', $scenarioStore.activeScenarioName || ''))} disabled={!$scenarioStore.isDirty} title="Save current scenario">
+        <button on:click={handleSave} disabled={!$scenarioStore.isDirty} title="Save current scenario">
             <Icon name="save"/>
         </button>
-        <button on:click={() => scenarioStore.deleteScenario($scenarioStore.activeScenarioName)} disabled={!$scenarioStore.activeScenarioName} title="Delete selected scenario">
+        <button on:click={handleDelete} disabled={!$scenarioStore.activeScenarioName} title="Delete selected scenario">
             <Icon name="trash"/>
         </button>
     </div>

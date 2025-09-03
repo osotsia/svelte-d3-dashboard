@@ -3,13 +3,13 @@
     import { technoEconomicModel, parameterRanges } from '../../lib/model.js';
 
     // --- STATE & CALCULATIONS ---
-    $: currentParameters = $scenarioStore.workingState.parameters || {};
+    $: currentParameters = $scenarioStore.workingState?.parameters || {};
     // @ts-ignore
     $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
     
     // --- EVENT HANDLERS ---
     function handleInput() {
-        scenarioStore.setParameters(currentParameters);
+        scenarioStore.updateWorkingState({ parameters: currentParameters });
     }
 </script>
 

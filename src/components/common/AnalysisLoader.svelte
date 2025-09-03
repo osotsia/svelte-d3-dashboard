@@ -14,18 +14,18 @@
     $: finalProps = { ...staticConfig?.props, ...dynamicProps };
     
     // --- State and Event Handlers ---
-    $: isPinned = $scenarioStore.workingState.pinned.some(p => p.id === id);
+    $: isPinned = $scenarioStore.workingState?.pinned.some(p => p.id === id);
 
     function handleTogglePin(event) {
         const { id, title } = event.detail;
-        const currentPins = $scenarioStore.workingState.pinned || [];
+        const currentPins = $scenarioStore.workingState?.pinned || [];
         const isCurrentlyPinned = currentPins.some(item => item.id === id);
         
         const newPins = isCurrentlyPinned
             ? currentPins.filter(item => item.id !== id)
             : [...currentPins, { id, title }];
             
-        scenarioStore.setPinnedItems(newPins);
+        scenarioStore.updateWorkingState({ pinned: newPins });
     }
 
     function handleUpdate(event) {

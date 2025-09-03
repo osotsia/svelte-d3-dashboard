@@ -7,12 +7,12 @@
 
     // --- EVENT HANDLERS ---
     function handleNarrativeInput(event) {
-        scenarioStore.setNarrative(event.target.value);
+        scenarioStore.updateWorkingState({ narrative: event.target.value });
     }
 </script>
 
 <div class="report-grid">
-    <!-- Model Details Panel (unchanged) -->
+    <!-- Model Details Panel -->
     <div class="panel model-panel">
         <h2 class="panel-title">Model Details</h2>
         <div class="model-explanation">
@@ -37,7 +37,7 @@
         <h2 class="panel-title">Analyst's Comments</h2>
         <textarea 
             placeholder="Summarize findings, context, and recommendations here..."
-            value={$scenarioStore.workingState.narrative || ''}
+            value={$scenarioStore.workingState?.narrative || ''}
             on:input={handleNarrativeInput}
         ></textarea>
     </div>
@@ -45,11 +45,11 @@
     <!-- Pinned Items Panel -->
     <div class="panel pinned-items-panel">
         <h2 class="panel-title">Pinned Analyses</h2>
-        {#if !$scenarioStore.workingState.pinned || $scenarioStore.workingState.pinned.length === 0}
+        {#if !$scenarioStore.workingState?.pinned || $scenarioStore.workingState?.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
             <AnalysisGrid>
-                {#each $scenarioStore.workingState.pinned as pinnedItem (pinnedItem.id)}
+                {#each $scenarioStore.workingState?.pinned as pinnedItem (pinnedItem.id)}
                     <AnalysisLoader id={pinnedItem.id} />
                 {/each}
             </AnalysisGrid>

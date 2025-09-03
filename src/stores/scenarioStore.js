@@ -1,146 +1,137 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { activeView } from './viewStore.js';
 
-const LOCAL_STORAGE_KEY = 'workbenchScenarios';
-
-function loadFromStorage() {
-    try {
-        const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-        const scenarios = stored ? JSON.parse(stored) : {};
-        // Normalize loaded scenarios to ensure all keys exist
-        for (const key in scenarios) {
-            if (!scenarios[key].pinned) scenarios[key].pinned = [];
-            if (!scenarios[key].pcpSelections) scenarios[key].pcpSelections = {};
-            if (!scenarios[key].narrative) scenarios[key].narrative = '';
+// Internal persistence helper
+const persistence = {
+    key: 'workbenchScenarios',
+    load: () => {
+        try {
+            const stored = localStorage.getItem(persistence.key);
+            return stored ? JSON.parse(stored) : {};
+        } catch (e) {
+            console.error("Failed to load scenarios from localStorage", e);
+            return {};
         }
-        return scenarios;
-    } catch (e) {
-        console.error("Failed to load scenarios from localStorage", e);
-        return {};
+    },
+    save: (scenarios) => {
+        try {
+            localStorage.setItem(persistence.key, JSON.stringify(scenarios));
+        } catch (e) {
+            console.error("Failed to save scenarios to localStorage", e);
+        }
     }
-}
+};
 
 function createScenarioStore() {
-    let _defaultScenario = {}; // To be set by initialize()
+    let _defaultScenario = {};
 
-    const { subscribe, set, update } = writable({
-        scenarios: loadFromStorage(),
-        workingState: {
-            parameters: {},
-            narrative: '',
-            pinned: [],
-            pcpSelections: {}
-        },
+    const { subscribe, update, set } = writable({
+        scenarios: {},
+        workingState: null, // Initialized via initialize()
         activeScenarioName: null,
         isDirty: false
     });
 
-    const store = {
-        subscribe,
+    function deepCopy(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+
+    // Ensures a loaded scenario object has all the keys of the default template.
+    function normalizeScenario(scenarioData, defaultData) {
+        return { ...defaultData, ...scenarioData };
+    }
+
+    // Public API / Service Layer
+    const service = {
         initialize: (defaultScenario) => {
-            _defaultScenario = JSON.parse(JSON.stringify(defaultScenario)); // Deep copy
+            _defaultScenario = deepCopy(defaultScenario);
+            const scenarios = persistence.load();
+            
+            // Normalize all loaded scenarios on startup to prevent errors
+            for (const key in scenarios) {
+                scenarios[key] = normalizeScenario(scenarios[key], _defaultScenario);
+            }
+            
+            set({
+                scenarios,
+                workingState: deepCopy(_defaultScenario),
+                activeScenarioName: null,
+                isDirty: false
+            });
+        },
+
+        // Generic updater for any part of the working state.
+        updateWorkingState: (partialState) => {
             update(s => ({
                 ...s,
-                workingState: JSON.parse(JSON.stringify(defaultScenario)) // Deep copy
+                workingState: { ...s.workingState, ...partialState },
+                isDirty: true
             }));
         },
 
-        // --- State Modifiers ---
-        setParameters: (params) => update(s => ({
-            ...s,
-            workingState: { ...s.workingState, parameters: params },
-            isDirty: true
-        })),
-        setNarrative: (narrative) => update(s => ({
-            ...s,
-            workingState: { ...s.workingState, narrative: narrative },
-            isDirty: true
-        })),
-        setPinnedItems: (pinnedItems) => update(s => ({
-            ...s,
-            workingState: { ...s.workingState, pinned: pinnedItems },
-            isDirty: true
-        })),
-        setPcpSelections: (selections) => update(s => ({
-            ...s,
-            workingState: { ...s.workingState, pcpSelections: selections },
-            isDirty: true
-        })),
-
-        // --- Scenario Actions ---
-        newScenario: () => update(s => {
-            if (s.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
-                return s;
-            }
+        newScenario: () => {
             activeView.set('Report');
-            return {
+            update(s => ({
                 ...s,
-                workingState: JSON.parse(JSON.stringify(_defaultScenario)),
+                workingState: deepCopy(_defaultScenario),
                 activeScenarioName: null,
                 isDirty: false
-            };
-        }),
+            }));
+        },
 
-        loadScenario: (name) => update(s => {
-            if (!s.scenarios[name]) return s;
-            if (s.isDirty && !confirm(`You have unsaved changes. Discard them and load "${name}"?`)) {
-                return s;
-            }
-            const loadedScenario = {
-                narrative: '',
-                pinned: [],
-                pcpSelections: {},
-                ...s.scenarios[name]
-            };
+        loadScenario: (name) => {
+            const s = get({ subscribe });
+            if (!s.scenarios[name]) return;
+
             activeView.set('Report');
-            return {
-                ...s,
-                workingState: JSON.parse(JSON.stringify(loadedScenario)),
+            update(current => ({
+                ...current,
+                workingState: deepCopy(s.scenarios[name]),
                 activeScenarioName: name,
                 isDirty: false
-            };
-        }),
+            }));
+        },
 
-        saveCurrentScenario: (name) => update(s => {
-            if (!name || !name.trim()) return s;
-            
-            const trimmedName = name.trim();
-            const newScenarios = { ...s.scenarios, [trimmedName]: s.workingState };
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
-            
+        saveCurrentScenario: (name) => {
+            let scenarios;
+            update(s => {
+                scenarios = { ...s.scenarios, [name]: s.workingState };
+                return {
+                    ...s,
+                    scenarios: scenarios,
+                    activeScenarioName: name,
+                    isDirty: false
+                };
+            });
+            persistence.save(scenarios);
             activeView.set('Report');
-            return {
-                ...s,
-                scenarios: newScenarios,
-                activeScenarioName: trimmedName,
-                isDirty: false
-            };
-        }),
+        },
 
-        deleteScenario: (name) => update(s => {
-            if (!s.scenarios[name] || !confirm(`Are you sure you want to delete scenario "${name}"?`)) {
-                return s; // Abort, no state change
-            }
-
+        deleteScenario: (name) => {
+            const s = get({ subscribe });
+            if (!s.scenarios[name]) return;
+            
             const newScenarios = { ...s.scenarios };
             delete newScenarios[name];
-            
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newScenarios));
+            persistence.save(newScenarios);
 
-            const newState = { ...s, scenarios: newScenarios };
-
-            if (s.activeScenarioName === name) {
-                newState.workingState = JSON.parse(JSON.stringify(_defaultScenario));
-                newState.activeScenarioName = null;
-                newState.isDirty = false;
-            }
-            
+            update(current => {
+                const newState = { ...current, scenarios: newScenarios };
+                if (current.activeScenarioName === name) {
+                    newState.workingState = deepCopy(_defaultScenario);
+                    newState.activeScenarioName = null;
+                    newState.isDirty = false;
+                }
+                return newState;
+            });
             activeView.set('Report');
-            return newState;
-        }),
+        },
     };
 
-    return store;
+    return {
+        subscribe,
+        ...service
+    };
 }
 
 export const scenarioStore = createScenarioStore();

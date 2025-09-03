@@ -1,6 +1,6 @@
 <script>
     import { activeView } from '../../stores/viewStore.js';
-    import ScenarioManager from './ScenarioManager.svelte';
+    import ScenarioManager from './ScenarioControls.svelte';
 
     const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];
 </script>
