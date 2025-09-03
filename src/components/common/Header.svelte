@@ -1,6 +1,6 @@
 <script>
     import { activeView } from '../../stores/viewStore.js';
-    import ScenarioManager from './ScenarioControls.svelte';
+    import ScenarioControls from './ScenarioControls.svelte';
 
     const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];
 </script>
@@ -17,13 +17,14 @@
         </nav>
     </div>
     <div class="scenario-controls-wrapper">
-        <ScenarioManager />
+        <ScenarioControls />
     </div>
 </header>
 
 <style>
-    .app-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1rem var(--spacing-unit); background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .app-header { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1rem var(--spacing-unit); background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     .title-and-nav { display: flex; align-items: center; gap: 2rem; }
+    .scenario-controls-wrapper { margin-left: auto; }
     h1 { margin: 0; font-size: 1.5rem; color: var(--header-color); }
     nav { display: flex; gap: 0.5rem; }
     nav button { background: none; border: none; font-size: 1rem; padding: 0.5rem 1rem; cursor: pointer; border-radius: 6px; color: var(--text-color-light); font-weight: 500; }
