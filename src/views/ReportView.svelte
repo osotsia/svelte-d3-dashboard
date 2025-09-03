@@ -32,9 +32,9 @@
         <Calculator />
     </div>
 
-    <!-- Analyst's Narrative Panel -->
+    <!-- Analyst's Comments Panel -->
     <div class="panel narrative-panel">
-        <h2 class="panel-title">Analyst's Narrative</h2>
+        <h2 class="panel-title">Analyst's Comments</h2>
         <textarea 
             placeholder="Summarize findings, context, and recommendations here..."
             value={$scenarioStore.workingState.narrative || ''}
