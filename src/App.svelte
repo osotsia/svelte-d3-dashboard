@@ -20,7 +20,7 @@
         'Data': DataView
     };
 
-    const ActiveComponent = $derived(viewComponents[activeView]);
+    const ActiveComponent = $derived(viewComponents[activeView.value]);
 
     onMount(() => {
         const defaultParams = Object.fromEntries(
@@ -43,6 +43,6 @@
 <main>
     <Header />
     {#if initialized}
-        <svelte:component this={viewComponents[activeView.value]} />
+        <ActiveComponent />
     {/if}
 </main>

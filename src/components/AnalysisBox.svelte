@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-    import Icon from './Icon.svelte';
+    import Icon from './Icons.svelte';
 
     let { id, title, layout = 'default', explanation = '', isPinned = false, children } = $props();
 
