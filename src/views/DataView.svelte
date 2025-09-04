@@ -1,6 +1,6 @@
 <script>
-    import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
-    import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
+    import AnalysisGrid from '../components/AnalysisGrid.svelte';
+    import AnalysisLoader from '../components/AnalysisLoader.svelte';
 
     // These IDs correspond to the static data definitions in analyses/static_data.js
     const dataItemIds = [

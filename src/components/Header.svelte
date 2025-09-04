@@ -1,5 +1,5 @@
 <script>
-    import { activeView } from '../../stores/viewStore.svelte.js';
+    import { activeView } from '../stores/viewStore.svelte.js';
     import ScenarioControls from './ScenarioControls.svelte';
 
     const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];

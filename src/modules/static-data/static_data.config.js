@@ -1,5 +1,5 @@
-import StaticDataItem from '../components/ui/StaticDataItem.svelte';
-import BenchmarkTable from '../components/ui/BenchmarkTable.svelte';
+import StaticDataItem from './StaticDataItem.svelte';
+import BenchmarkTable from './BenchmarkTable.svelte';
 
 /**
  * A central registry for static, user-defined data items and benchmarks.

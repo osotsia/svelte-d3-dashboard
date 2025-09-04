@@ -1,4 +1,4 @@
-import BarChart from '../../components/ui/BarChart.svelte';
+import BarChart from '../../components/BarChart.svelte';
 
 export default {
     id: 'sobol',

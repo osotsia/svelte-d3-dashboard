@@ -1,8 +1,8 @@
 <script>
     import { scenarioStore } from '../stores/scenarioStore.svelte.js';
-    import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
-    import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
-    import Calculator from '../components/ui/ModelCalculator.svelte';
+    import AnalysisGrid from '../components/AnalysisGrid.svelte';
+    import AnalysisLoader from '../components/AnalysisLoader.svelte';
+    import Calculator from '../components/ModelCalculator.svelte';
 
     // handleNarrativeInput is no longer needed with direct binding.
 </script>

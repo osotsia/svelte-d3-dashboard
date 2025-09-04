@@ -1,6 +1,6 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
-    import Icon from '../ui/Icon.svelte';
+    import { scenarioStore } from '../stores/scenarioStore.svelte.js';
+    import Icon from './Icon.svelte';
 
     const scenariosList = $derived(Object.keys(scenarioStore.scenarios).sort());
 

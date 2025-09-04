@@ -1,7 +1,7 @@
 <script>
-    import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
-    import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
-    import { analyses } from '../analyses/index.js';
+    import AnalysisGrid from '../components/AnalysisGrid.svelte';
+    import AnalysisLoader from '../components/AnalysisLoader.svelte';
+    import { analyses } from '../modules/index.js';
 
     const analysisIds = ['sobol', 'pcp'];
     

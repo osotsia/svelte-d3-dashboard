@@ -4,7 +4,7 @@
     import { scenarioStore } from './stores/scenarioStore.svelte.js';
     import { parameterRanges } from './lib/model.js';
 
-    import Header from './components/common/Header.svelte';
+    import Header from './components/Header.svelte';
     import ReportView from './views/ReportView.svelte';
     import KeyDriversView from './views/KeyDriversView.svelte';
     import SurrogateModelView from './views/SurrogateModelView.svelte';
@@ -35,7 +35,7 @@
         };
         scenarioStore.initialize(defaultScenario);
 
-        // Set flag after initialization to prevent race conditions.
+        // prevent race conditions.
         initialized = true;
     });
 </script>

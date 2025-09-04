@@ -1,6 +1,6 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
-    import { technoEconomicModel, parameterRanges } from '../../lib/model.js';
+    import { scenarioStore } from '../stores/scenarioStore.svelte.js';
+    import { technoEconomicModel, parameterRanges } from '../lib/model.js';
 
     const lcohResult = $derived(
         scenarioStore.workingState?.parameters.capital_cost

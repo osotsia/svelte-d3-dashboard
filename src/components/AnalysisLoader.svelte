@@ -1,8 +1,8 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
-    import { dataStore } from '../../stores/dataStore.svelte.js';
-    import { analyses } from '../../analyses/index.js';
-    import AnalysisBox from '../ui/AnalysisBox.svelte';
+    import { scenarioStore } from '../stores/scenarioStore.svelte.js';
+    import { dataStore } from '../stores/dataStore.svelte.js';
+    import { analyses } from '../modules/index.js';
+    import AnalysisBox from './AnalysisBox.svelte';
 
     let { id } = $props();
 
