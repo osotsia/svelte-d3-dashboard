@@ -1,5 +1,5 @@
 <script>
-    import { activeView } from '../../stores/viewStore.js';
+    import { activeView } from '../../stores/viewStore.svelte.js';
     import ScenarioControls from './ScenarioControls.svelte';
 
     const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];
@@ -10,7 +10,10 @@
         <h1>LCOH Workbench</h1>
         <nav>
             {#each views as view}
-                <button class:active={$activeView === view} on:click={() => $activeView = view}>
+                <button 
+                    class:active={activeView.value === view} 
+                    onclick={() => activeView.set(view)}
+                >
                     {view}
                 </button>
             {/each}

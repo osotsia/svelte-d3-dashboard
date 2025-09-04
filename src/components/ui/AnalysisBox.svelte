@@ -2,11 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import Icon from './Icon.svelte';
 
-    export let id;
-    export let title;
-    export let layout = 'default';
-    export let explanation = '';
-    export let isPinned = false;
+    let { id, title, layout = 'default', explanation = '', isPinned = false, children } = $props();
 
     const dispatch = createEventDispatcher();
 
@@ -18,7 +14,7 @@
 <div class="analysis-box" class:full-width={layout === 'full-width'}>
     <header>
         <h2>{title}</h2>
-        <button class="pin-button" on:click={togglePin} class:active={isPinned} title={isPinned ? 'Unpin' : 'Pin to Report'}>
+        <button class="pin-button" onclick={togglePin} class:active={isPinned} title={isPinned ? 'Unpin' : 'Pin to Report'}>
             <Icon name="pin" size={18}/>
         </button>
     </header>
@@ -28,7 +24,7 @@
     {/if}
 
     <div class="content">
-        <slot></slot>
+        {@render children()}
     </div>
 </div>
 

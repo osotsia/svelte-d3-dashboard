@@ -1,5 +1,5 @@
 import ParallelCoordinatesPlot from './ParallelCoordinatesPlot.svelte';
-import { scenarioStore } from '../../stores/scenarioStore.js';
+import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
 
 export default {
     id: 'pcp',

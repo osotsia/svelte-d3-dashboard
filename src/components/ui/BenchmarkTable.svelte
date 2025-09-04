@@ -1,6 +1,5 @@
 <script>
-    export let headers = [];
-    export let rows = [];
+    let { headers = [], rows = [] } = $props();
 </script>
 
 <div class="table-container">

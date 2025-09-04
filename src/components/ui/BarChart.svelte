@@ -2,78 +2,79 @@
     import { onMount } from 'svelte';
     import * as d3 from 'd3';
 
-    // --- Component Props ---
-    export let data = [];
-    export let yKey = 'label';
-    export let xKeys = ['value']; // Array of keys for the x-axis values
-    export let xLabel = '';
-    export let yLabel = '';
-
-    // --- Optional Props for Advanced Features ---
-    export let showLegend = false;
-    export let legendLabels = {}; // e.g., { 'S1': 'S1 (First-order)' }
-    export let errorBarKeys = {}; // e.g., { 'value_key': 'confidence_key' }
-    export let colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']; // Default color scheme
+    let {
+        data = [],
+        yKey = 'label',
+        xKeys = ['value'],
+        xLabel = '',
+        yLabel = '',
+        showLegend = false,
+        legendLabels = {},
+        errorBarKeys = {},
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+    } = $props();
 
     // --- D3 & SVG Setup ---
-    let width = 500;
-    let height = 300;
+    let width = $state(500);
+    let height = $state(300);
     const margin = { top: 20, right: 20, bottom: 60, left: 100 };
     let svgEl, xAxisG, yAxisG;
 
     // --- Reactive Computations ---
-    $: isGrouped = xKeys.length > 1;
-    $: innerWidth = width - margin.left - margin.right;
-    $: innerHeight = height - margin.top - margin.bottom;
+    const isGrouped = $derived(xKeys.length > 1);
+    const innerWidth = $derived(width - margin.left - margin.right);
+    const innerHeight = $derived(height - margin.top - margin.bottom);
 
     // --- Scales ---
-    $: yScale = d3.scaleBand()
+    const yScale = $derived(d3.scaleBand()
         .domain(data.map(d => d[yKey]))
         .range([0, innerHeight])
-        .padding(0.2);
+        .padding(0.2));
 
-    $: yInnerScale = d3.scaleBand()
+    const yInnerScale = $derived(d3.scaleBand()
         .domain(xKeys)
         .range([0, yScale.bandwidth()])
-        .padding(isGrouped ? 0.05 : 0);
+        .padding(isGrouped ? 0.05 : 0));
 
-    $: xMax = d3.max(data, d => 
+    const xMax = $derived(d3.max(data, d => 
         d3.max(xKeys, key => {
             const value = d[key] || 0;
             const confKey = errorBarKeys[key];
             const conf = confKey && d[confKey] ? d[confKey] : 0;
             return value + conf;
         })
-    );
+    ));
 
-    $: xScale = d3.scaleLinear()
+    const xScale = $derived(d3.scaleLinear()
         .domain([0, xMax > 0 ? xMax * 1.1 : 1]).nice()
-        .range([0, innerWidth]);
+        .range([0, innerWidth]));
 
-    $: colorScale = d3.scaleOrdinal()
+    const colorScale = $derived(d3.scaleOrdinal()
         .domain(xKeys)
-        .range(colors);
+        .range(colors));
 
     // --- Axis Updates ---
-    $: if (xAxisG && yAxisG) {
-        const xAxis = d3.axisBottom(xScale).ticks(5).tickSize(-innerHeight);
-        d3.select(xAxisG).call(xAxis)
-            .selectAll('.tick text').style('font-size', '0.8rem');
-        d3.select(xAxisG).selectAll('.tick line').style('stroke', 'var(--border-color)').style('stroke-dasharray', '2,2');
-        d3.select(xAxisG).select('.domain').style('display', 'none');
-        
-        const yAxis = d3.axisLeft(yScale);
-        d3.select(yAxisG).call(yAxis)
-            .selectAll('.tick text').style('font-size', '0.8rem');
-        d3.select(yAxisG).select('.domain').style('stroke', 'var(--text-color)');
-    }
+    $effect(() => {
+        if (xAxisG) {
+            const xAxis = d3.axisBottom(xScale).ticks(5).tickSize(-innerHeight);
+            d3.select(xAxisG).call(xAxis)
+                .selectAll('.tick text').style('font-size', '0.8rem');
+            d3.select(xAxisG).selectAll('.tick line').style('stroke', 'var(--border-color)').style('stroke-dasharray', '2,2');
+            d3.select(xAxisG).select('.domain').style('display', 'none');
+        }
+        if (yAxisG) {
+            const yAxis = d3.axisLeft(yScale);
+            d3.select(yAxisG).call(yAxis)
+                .selectAll('.tick text').style('font-size', '0.8rem');
+            d3.select(yAxisG).select('.domain').style('stroke', 'var(--text-color)');
+        }
+    });
 
     // --- Lifecycle & Responsiveness ---
     onMount(() => {
         const resizeObserver = new ResizeObserver(entries => {
             if (!entries || !entries.length) return;
             const entry = entries[0];
-            // Adjust height based on number of bars to prevent squishing
             const optimalBarHeight = 40;
             const requiredHeight = data.length * optimalBarHeight + margin.top + margin.bottom;
             width = entry.contentRect.width;

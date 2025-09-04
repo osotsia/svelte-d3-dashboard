@@ -1,4 +1,4 @@
-import ModelCardDisplay from './ModelCardDisplay.svelte';
+import ModelCardDisplay from '../../components/common/ModelCardDisplay.svelte';
 
 export default {
     id: 'model-card',

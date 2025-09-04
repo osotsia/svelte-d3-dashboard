@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
-    import { activeView } from './stores/viewStore.js';
-    import { scenarioStore } from './stores/scenarioStore.js';
+    import { activeView } from './stores/viewStore.svelte.js';
+    import { scenarioStore } from './stores/scenarioStore.svelte.js';
     import { parameterRanges } from './lib/model.js';
 
     import Header from './components/common/Header.svelte';
@@ -10,12 +10,17 @@
     import SurrogateModelView from './views/SurrogateModelView.svelte';
     import DataView from './views/DataView.svelte';
 
+    // Add initialized state flag.
+    let initialized = $state(false);
+
     const viewComponents = {
         'Report': ReportView,
         'Key Drivers': KeyDriversView,
         'Surrogate Model': SurrogateModelView,
         'Data': DataView
     };
+
+    const ActiveComponent = $derived(viewComponents[activeView]);
 
     onMount(() => {
         const defaultParams = Object.fromEntries(
@@ -29,10 +34,15 @@
             pcpSelections: {}
         };
         scenarioStore.initialize(defaultScenario);
+
+        // Set flag after initialization to prevent race conditions.
+        initialized = true;
     });
 </script>
 
 <main>
     <Header />
-    <svelte:component this={viewComponents[$activeView]} />
+    {#if initialized}
+        <svelte:component this={viewComponents[activeView.value]} />
+    {/if}
 </main>

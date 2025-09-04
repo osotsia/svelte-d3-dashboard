@@ -1,24 +1,28 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.js';
-    import { dataStore } from '../../stores/dataStore.js';
+    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
+    import { dataStore } from '../../stores/dataStore.svelte.js';
     import { analyses } from '../../analyses/index.js';
     import AnalysisBox from '../ui/AnalysisBox.svelte';
 
-    export let id;
+    let { id } = $props();
 
     // --- Data Loading and Prop Assembly ---
-    $: staticConfig = analyses[id];
-    $: dynamicProps = staticConfig?.mapper
-        ? staticConfig.mapper($dataStore, $scenarioStore.workingState)
-        : {};
-    $: finalProps = { ...staticConfig?.props, ...dynamicProps };
+    const staticConfig = analyses[id];
+    // Assign the component constructor to a capitalized variable.
+    const Component = staticConfig?.component;
+
+    const dynamicProps = $derived(staticConfig?.mapper
+        ? staticConfig.mapper(dataStore, scenarioStore.workingState)
+        : {});
+
+    const finalProps = $derived({ ...staticConfig?.props, ...dynamicProps });
     
     // --- State and Event Handlers ---
-    $: isPinned = $scenarioStore.workingState?.pinned.some(p => p.id === id);
+    const isPinned = $derived(scenarioStore.workingState?.pinned.some(p => p.id === id));
 
     function handleTogglePin(event) {
         const { id, title } = event.detail;
-        const currentPins = $scenarioStore.workingState?.pinned || [];
+        const currentPins = scenarioStore.workingState?.pinned || [];
         const isCurrentlyPinned = currentPins.some(item => item.id === id);
         
         const newPins = isCurrentlyPinned
@@ -29,14 +33,13 @@
     }
 
     function handleUpdate(event) {
-        // Generic handler: invokes updater if defined in the analysis config.
         if (staticConfig?.updater) {
             staticConfig.updater(event);
         }
     }
 </script>
 
-{#if staticConfig}
+{#if staticConfig && Component}
     <AnalysisBox
         id={staticConfig.id}
         title={staticConfig.title}
@@ -45,8 +48,7 @@
         isPinned={isPinned}
         on:togglePin={handleTogglePin}
     >
-        <svelte:component
-            this={staticConfig.component}
+        <Component
             {...finalProps}
             on:update={handleUpdate}
         />

@@ -3,23 +3,10 @@
     import * as d3 from 'd3';
     import Axis from './Axis.svelte';
 
-    export let data = [];
-    export let keys = [];
-    export let colorKey = '';
-    export let selections = {}; 
+    let { data = [], keys = [], colorKey = '', selections = {} } = $props();
 
-    /**
-     * Transforms raw data into drawable paths with activity states.
-     * This is a pure function, making it predictable and testable.
-     * @param {Array<Object>} inputData - The raw data points.
-     * @param {Array<string>} dimensionKeys - The keys for each axis/dimension.
-     * @param {Map<string, [number, number]>} selectionsMap - The active brush selections.
-     * @param {string} colorDimensionKey - The key used for coloring active paths.
-     * @param {Function} lineGen - The D3 line generator.
-     * @param {Function} colorScale - The D3 color scale.
-     * @returns {Array<Object>} The processed data ready for rendering.
-     */
     function processData(inputData, dimensionKeys, selectionsMap, colorDimensionKey, lineGen, colorScale) {
+        if (!inputData || !dimensionKeys || !lineGen || !colorScale) return [];
         return inputData.map(d => {
             const isActive = Array.from(selectionsMap).every(([key, [min, max]]) => {
                 const value = d[key];
@@ -39,20 +26,22 @@
     const margin = { top: 30, right: 10, bottom: 20, left: 10 };
     let width = 1100;
     
-    $: selectionsMap = new Map(Object.entries(selections));
-    $: height = keys.length * 180 + margin.top + margin.bottom;
-    $: x = new Map(Array.from(keys, key =>
+    const selectionsMap = $derived(new Map(Object.entries(selections)));
+    const height = $derived(keys.length * 180 + margin.top + margin.bottom);
+    
+    const x = $derived(new Map(Array.from(keys, key =>
         [key, d3.scaleLinear(d3.extent(data, d => d[key]), [margin.left, width - margin.right])]
-    ));
-    $: y = d3.scalePoint(keys, [margin.top, height - margin.bottom]);
-    $: color = d3.scaleSequential(x.get(colorKey)?.domain(), d3.interpolateBrBG);
-    $: lineGenerator = d3.line()
+    )));
+    
+    const y = $derived(d3.scalePoint(keys, [margin.top, height - margin.bottom]));
+    const color = $derived(d3.scaleSequential(x.get(colorKey)?.domain(), d3.interpolateBrBG));
+    
+    const lineGenerator = $derived(d3.line()
         .defined(([, value]) => value != null)
         .x(([key, value]) => x.get(key)(value))
-        .y(([key]) => y(key));
+        .y(([key]) => y(key)));
 
-    // The reactive block is now a clean, declarative call.
-    $: pathData = processData(data, keys, selectionsMap, colorKey, lineGenerator, color);
+    const pathData = $derived(processData(data, keys, selectionsMap, colorKey, lineGenerator, color));
 
     function handleBrush(event) {
         const { key, extent } = event.detail;

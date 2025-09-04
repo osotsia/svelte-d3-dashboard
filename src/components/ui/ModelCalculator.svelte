@@ -1,15 +1,25 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.js';
+    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
     import { technoEconomicModel, parameterRanges } from '../../lib/model.js';
 
-    // --- STATE & CALCULATIONS ---
-    $: currentParameters = $scenarioStore.workingState?.parameters || {};
-    // @ts-ignore
-    $: lcohResult = currentParameters.capital_cost ? technoEconomicModel(currentParameters) : 0;
+    const lcohResult = $derived(
+        scenarioStore.workingState?.parameters.capital_cost
+        ? technoEconomicModel(scenarioStore.workingState.parameters)
+        : 0
+    );
     
-    // --- EVENT HANDLERS ---
-    function handleInput() {
-        scenarioStore.updateWorkingState({ parameters: currentParameters });
+    const formatValue = (key, value) => {
+        if (value === undefined) return '';
+        const options = { maximumFractionDigits: key === 'efficiency' || key === 'interest_rate' ? 3 : 0 };
+        return value.toLocaleString(undefined, options);
+    };
+
+    function handleInput(key, event) {
+        const newParameters = {
+            ...scenarioStore.workingState.parameters,
+            [key]: Number(event.currentTarget.value)
+        };
+        scenarioStore.updateWorkingState({ parameters: newParameters });
     }
 </script>
 
@@ -19,30 +29,28 @@
     <span class="lcoh-value">{lcohResult.toFixed(2)} <span class="lcoh-unit">($/Unit)</span></span>
 </div>
 
-{#each Object.entries(parameterRanges) as [key, config] (key)}
-    {@const id = `slider-${key}`}
-    {@const format = (v) => v.toLocaleString(undefined, { maximumFractionDigits: key === 'efficiency' || key === 'interest_rate' ? 3 : 0 })}
-
-    <div class="slider-group">
-        <label for={id}>
-            {key.replace(/_/g, ' ')}: 
-            <span class="slider-value">
-                {#if currentParameters[key] !== undefined}
-                    {format(currentParameters[key])}
-                {/if}
-            </span>
-        </label>
-        <input 
-            type="range" 
-            {id} 
-            min={config.min} 
-            max={config.max} 
-            step={config.step} 
-            bind:value={currentParameters[key]} 
-            on:input={handleInput} 
-        />
-    </div>
-{/each}
+{#if scenarioStore.workingState}
+    {#each Object.entries(parameterRanges) as [key, config] (key)}
+        {@const id = `slider-${key}`}
+        <div class="slider-group">
+            <label for={id}>
+                {key.replace(/_/g, ' ')}: 
+                <span class="slider-value">
+                    {formatValue(key, scenarioStore.workingState.parameters[key])}
+                </span>
+            </label>
+            <input 
+                type="range" 
+                {id} 
+                min={config.min} 
+                max={config.max} 
+                step={config.step} 
+                value={scenarioStore.workingState.parameters[key]}
+                oninput={(e) => handleInput(key, e)}
+            />
+        </div>
+    {/each}
+{/if}
 
 <style>
     .panel-title { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--header-color); }
@@ -59,7 +67,6 @@
         padding: 2px 6px; 
         border-radius: 4px; 
         font-size: 0.9em;
-        /* Prevent layout shift when value is not yet available */
         display: inline-block;
         min-width: 40px; 
         text-align: right;

@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { get } from 'svelte/store';
-import { scenarioStore } from './scenarioStore.js';
-import { activeView } from './viewStore.js';
+import { scenarioStore } from './scenarioStore.svelte.js';
+import { activeView } from './viewStore.svelte.js';
 
 // Define a consistent default scenario for all tests
 const defaultScenario = {
@@ -46,11 +45,11 @@ describe('scenarioStore', () => {
 
     it('initializes with a default state when localStorage is empty', () => {
         // Assert
-        const state = get(scenarioStore);
-        expect(state.scenarios).toEqual({});
-        expect(state.workingState).toEqual(defaultScenario);
-        expect(state.activeScenarioName).toBe(null);
-        expect(state.isDirty).toBe(false);
+        // MODIFICATION: Access store state via direct properties instead of get()
+        expect(scenarioStore.scenarios).toEqual({});
+        expect(scenarioStore.workingState).toEqual(defaultScenario);
+        expect(scenarioStore.activeScenarioName).toBe(null);
+        expect(scenarioStore.isDirty).toBe(false);
         expect(localStorageMock.getItem).toHaveBeenCalledWith('workbenchScenarios');
     });
 
@@ -65,9 +64,9 @@ describe('scenarioStore', () => {
         scenarioStore.initialize(defaultScenario);
 
         // Assert
-        const state = get(scenarioStore);
         const expectedNormalizedScenario = { ...defaultScenario, parameters: { paramA: 5 } };
-        expect(state.scenarios['My Scenario']).toEqual(expectedNormalizedScenario);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.scenarios['My Scenario']).toEqual(expectedNormalizedScenario);
     });
 
     it('updates workingState and sets isDirty to true', () => {
@@ -75,30 +74,30 @@ describe('scenarioStore', () => {
         scenarioStore.updateWorkingState({ narrative: 'Test narrative' });
 
         // Assert
-        const state = get(scenarioStore);
-        expect(state.workingState.narrative).toBe('Test narrative');
-        expect(state.isDirty).toBe(true);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.workingState.narrative).toBe('Test narrative');
+        expect(scenarioStore.isDirty).toBe(true);
     });
 
     it('saves the current scenario, updates localStorage, and resets isDirty', () => {
         // Arrange
+        // MODIFICATION: Capture state before save directly
+        const scenariosBeforeSave = { ...scenarioStore.scenarios };
         scenarioStore.updateWorkingState({ parameters: { paramA: 99 } });
-        const stateBeforeSave = get(scenarioStore);
-        const scenariosBeforeSave = stateBeforeSave.scenarios;
 
         // Act
         scenarioStore.saveCurrentScenario('Test Save');
 
         // Assert
-        const stateAfterSave = get(scenarioStore);
-        expect(stateAfterSave.activeScenarioName).toBe('Test Save');
-        expect(stateAfterSave.isDirty).toBe(false);
-        expect(stateAfterSave.scenarios['Test Save']).toEqual(stateAfterSave.workingState);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.activeScenarioName).toBe('Test Save');
+        expect(scenarioStore.isDirty).toBe(false);
+        expect(scenarioStore.scenarios['Test Save']).toEqual(scenarioStore.workingState);
 
         // Construct the expected object dynamically
         const expectedStoredData = {
             ...scenariosBeforeSave,
-            'Test Save': stateAfterSave.workingState
+            'Test Save': scenarioStore.workingState
         };
 
         expect(localStorageMock.setItem).toHaveBeenCalledWith('workbenchScenarios', JSON.stringify(expectedStoredData));
@@ -107,18 +106,21 @@ describe('scenarioStore', () => {
     it('loads an existing scenario and resets isDirty', () => {
         // Arrange
         const scenarioToLoad = { parameters: { paramA: 123 }, narrative: 'loaded', pinned: [], pcpSelections: {} };
+        
+        // MODIFICATION: Set up state using the store's public API for robustness
         scenarioStore.initialize(defaultScenario); // Start clean
-        get(scenarioStore).scenarios = { 'Scenario to Load': scenarioToLoad }; // Manually set up state
-        scenarioStore.updateWorkingState({ narrative: 'dirty state' });
+        scenarioStore.updateWorkingState(scenarioToLoad);
+        scenarioStore.saveCurrentScenario('Scenario to Load'); // Now 'Scenario to Load' exists in store.scenarios
+        scenarioStore.updateWorkingState({ narrative: 'dirty state' }); // Make it dirty before loading
 
         // Act
         scenarioStore.loadScenario('Scenario to Load');
 
         // Assert
-        const state = get(scenarioStore);
-        expect(state.workingState).toEqual(scenarioToLoad);
-        expect(state.activeScenarioName).toBe('Scenario to Load');
-        expect(state.isDirty).toBe(false);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.workingState).toEqual(scenarioToLoad);
+        expect(scenarioStore.activeScenarioName).toBe('Scenario to Load');
+        expect(scenarioStore.isDirty).toBe(false);
     });
 
     it('creates a new scenario, resetting the state', () => {
@@ -130,10 +132,10 @@ describe('scenarioStore', () => {
         scenarioStore.newScenario();
         
         // Assert
-        const state = get(scenarioStore);
-        expect(state.workingState).toEqual(defaultScenario);
-        expect(state.activeScenarioName).toBe(null);
-        expect(state.isDirty).toBe(false);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.workingState).toEqual(defaultScenario);
+        expect(scenarioStore.activeScenarioName).toBe(null);
+        expect(scenarioStore.isDirty).toBe(false);
     });
 
     it('deletes a scenario and updates localStorage', () => {
@@ -141,15 +143,16 @@ describe('scenarioStore', () => {
         // We need a known state to delete from.
         scenarioStore.saveCurrentScenario('Scenario A');
         scenarioStore.saveCurrentScenario('Scenario B');
-        const scenariosBeforeDelete = get(scenarioStore).scenarios;
+        // MODIFICATION: Capture state before delete by spreading the object
+        const scenariosBeforeDelete = { ...scenarioStore.scenarios };
 
         // Act
         scenarioStore.deleteScenario('Scenario A');
         
         // Assert
-        const stateAfterDelete = get(scenarioStore);
-        expect(stateAfterDelete.scenarios['Scenario A']).toBeUndefined();
-        expect(stateAfterDelete.scenarios['Scenario B']).toBeDefined();
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.scenarios['Scenario A']).toBeUndefined();
+        expect(scenarioStore.scenarios['Scenario B']).toBeDefined();
 
         // Construct the expected object dynamically
         const expectedStoredData = { ...scenariosBeforeDelete };
@@ -166,10 +169,10 @@ describe('scenarioStore', () => {
         scenarioStore.deleteScenario('Active Scenario');
 
         // Assert
-        const state = get(scenarioStore);
-        expect(state.scenarios['Active Scenario']).toBeUndefined();
-        expect(state.workingState).toEqual(defaultScenario);
-        expect(state.activeScenarioName).toBe(null);
-        expect(state.isDirty).toBe(false);
+        // MODIFICATION: Access store state via direct properties
+        expect(scenarioStore.scenarios['Active Scenario']).toBeUndefined();
+        expect(scenarioStore.workingState).toEqual(defaultScenario);
+        expect(scenarioStore.activeScenarioName).toBe(null);
+        expect(scenarioStore.isDirty).toBe(false);
     });
 });

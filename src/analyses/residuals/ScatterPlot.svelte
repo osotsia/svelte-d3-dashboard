@@ -2,14 +2,8 @@
     import { onMount } from 'svelte';
     import * as d3 from 'd3';
 
-    /**
-     * Creates a D3 linear scale from data, with padding.
-     * @param {Array<Object>} data - The dataset.
-     * @param {string} key - The key to access data for the domain.
-     * @param {[number, number]} range - The pixel range of the scale.
-     * @param {number} [padding=0.05] - The percentage of padding to add to the domain.
-     * @returns {d3.scaleLinear<number, number>} The configured D3 scale.
-     */
+    let { data = [], xKey = 'x', yKey = 'y', xLabel = '', yLabel = '' } = $props();
+
     function createPaddedScale(data, key, range, padding = 0.05) {
         if (!data || data.length === 0) {
             return d3.scaleLinear().domain([0, 1]).range(range);
@@ -21,29 +15,27 @@
             .range(range);
     }
 
-    export let data = [];
-    export let xKey = 'x';
-    export let yKey = 'y';
-    export let xLabel = '';
-    export let yLabel = '';
-
-    let width = 500;
-    let height = 400;
+    let width = $state(500);
+    let height = $state(400);
     const margin = { top: 20, right: 30, bottom: 60, left: 60 };
     let svgEl, xAxisG, yAxisG;
 
-    $: innerWidth = width - margin.left - margin.right;
-    $: innerHeight = height - margin.top - margin.bottom;
+    const innerWidth = $derived(width - margin.left - margin.right);
+    const innerHeight = $derived(height - margin.top - margin.bottom);
 
-    $: xScale = createPaddedScale(data, xKey, [0, innerWidth]);
-    $: yScale = createPaddedScale(data, yKey, [innerHeight, 0]);
+    const xScale = $derived(createPaddedScale(data, xKey, [0, innerWidth]));
+    const yScale = $derived(createPaddedScale(data, yKey, [innerHeight, 0]));
 
-    $: if (xAxisG && yAxisG) {
-        const xAxis = d3.axisBottom(xScale).ticks(5);
-        d3.select(xAxisG).call(xAxis);
-        const yAxis = d3.axisLeft(yScale).ticks(5);
-        d3.select(yAxisG).call(yAxis);
-    }
+    $effect(() => {
+        if (xAxisG) {
+            const xAxis = d3.axisBottom(xScale).ticks(5);
+            d3.select(xAxisG).call(xAxis);
+        }
+        if (yAxisG) {
+            const yAxis = d3.axisLeft(yScale).ticks(5);
+            d3.select(yAxisG).call(yAxis);
+        }
+    });
 
     onMount(() => {
         const resizeObserver = new ResizeObserver(entries => {

@@ -1,53 +1,51 @@
 <script>
-    import { onMount, createEventDispatcher } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
     import * as d3 from 'd3';
 
-    export let scale;
-    export let pcpKey;
-    export let selectionExtent = null;
+    let { scale, pcpKey, selectionExtent = null, ...rest } = $props();
 
     let gElement;
     const dispatch = createEventDispatcher();
     const brushHeight = 50;
-    let brush;
 
-    function brushed({ selection, sourceEvent }) {
-        if (!sourceEvent) return;
-        let extent = null;
-        if (selection) {
-            extent = selection.map(scale.invert);
-        }
-        dispatch('brush', { key: pcpKey, extent: extent });
-    }
+    $effect(() => {
+        if (!gElement) return;
 
-    onMount(() => {
         const axis = d3.axisBottom(scale);
-        d3.select(gElement).call(axis);
-        brush = d3.brushX()
+        const g = d3.select(gElement);
+
+        g.select('.axis-instance').remove(); // Clear previous axis
+        g.append('g').attr('class', 'axis-instance').call(axis);
+
+        function brushed({ selection, sourceEvent }) {
+            if (!sourceEvent) return;
+            let extent = null;
+            if (selection) {
+                extent = selection.map(scale.invert);
+            }
+            dispatch('brush', { key: pcpKey, extent: extent });
+        }
+
+        const brush = d3.brushX()
             .extent([
                 [scale.range()[0], -brushHeight / 2],
                 [scale.range()[1], brushHeight / 2]
             ])
             .on('end', brushed);
-        d3.select(gElement).call(brush);
-    });
+        
+        g.call(brush);
 
-    $: if (gElement && brush) {
+        // Programmatically move the brush based on the selectionExtent prop
         if (selectionExtent) {
             const pixelExtent = selectionExtent.map(scale);
-            d3.select(gElement).call(brush.move, pixelExtent);
+            g.call(brush.move, pixelExtent);
         } else {
-            d3.select(gElement).call(brush.move, null);
+            g.call(brush.move, null);
         }
-    }
-
-    $: if (gElement && scale) {
-        const axis = d3.axisBottom(scale);
-        d3.select(gElement).transition().duration(200).call(axis);
-    }
+    });
 </script>
 
-<g bind:this={gElement} {...$$restProps}>
+<g bind:this={gElement} {...rest}>
     <text
         class="axis-label"
         x={scale.range()[0]}
@@ -59,7 +57,6 @@
     </text>
 </g>
 
-<!-- Add this style block -->
 <style>
     .axis-label {
         font-size: var(--font-size-pcp-label);

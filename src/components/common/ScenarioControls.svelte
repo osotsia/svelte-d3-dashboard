@@ -1,33 +1,32 @@
 <script>
-    import { scenarioStore } from '../../stores/scenarioStore.js';
+    import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
     import Icon from '../ui/Icon.svelte';
 
-    let scenariosList = [];
-    $: scenariosList = Object.keys($scenarioStore.scenarios).sort();
+    const scenariosList = $derived(Object.keys(scenarioStore.scenarios).sort());
 
     function handleLoad(name) {
-        if ($scenarioStore.isDirty && !confirm(`You have unsaved changes. Discard them and load "${name}"?`)) {
+        if (scenarioStore.isDirty && !confirm(`You have unsaved changes. Discard them and load "${name}"?`)) {
             return;
         }
         scenarioStore.loadScenario(name);
     }
 
     function handleNew() {
-        if ($scenarioStore.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
+        if (scenarioStore.isDirty && !confirm('You have unsaved changes. Discard them and start a new scenario?')) {
             return;
         }
         scenarioStore.newScenario();
     }
 
     function handleSave() {
-        const name = prompt('Enter scenario name:', $scenarioStore.activeScenarioName || '');
+        const name = prompt('Enter scenario name:', scenarioStore.activeScenarioName || '');
         if (name && name.trim()) {
             scenarioStore.saveCurrentScenario(name.trim());
         }
     }
 
     function handleDelete() {
-        const name = $scenarioStore.activeScenarioName;
+        const name = scenarioStore.activeScenarioName;
         if (!name) return;
         if (confirm(`Are you sure you want to delete scenario "${name}"?`)) {
             scenarioStore.deleteScenario(name);
@@ -40,24 +39,24 @@
         {#each scenariosList as name (name)}
             <button 
                 class="scenario-item" 
-                class:active={name === $scenarioStore.activeScenarioName} 
-                on:click={() => handleLoad(name)}
+                class:active={name === scenarioStore.activeScenarioName} 
+                onclick={() => handleLoad(name)}
             >
                 {name}
-                {#if name === $scenarioStore.activeScenarioName && $scenarioStore.isDirty}
+                {#if name === scenarioStore.activeScenarioName && scenarioStore.isDirty}
                     <span class="dirty-indicator">*</span>
                 {/if}
             </button>
         {/each}
     </div>
     <div class="scenario-controls">
-        <button on:click={handleNew} title="New Scenario">
+        <button onclick={handleNew} title="New Scenario">
             <Icon name="new"/>
         </button>
-        <button on:click={handleSave} disabled={!$scenarioStore.isDirty} title="Save current scenario">
+        <button onclick={handleSave} disabled={!scenarioStore.isDirty} title="Save current scenario">
             <Icon name="save"/>
         </button>
-        <button on:click={handleDelete} disabled={!$scenarioStore.activeScenarioName} title="Delete selected scenario">
+        <button onclick={handleDelete} disabled={!scenarioStore.activeScenarioName} title="Delete selected scenario">
             <Icon name="trash"/>
         </button>
     </div>

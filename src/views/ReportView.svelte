@@ -1,14 +1,10 @@
 <script>
-    import { scenarioStore } from '../stores/scenarioStore.js';
-    // Import the new and updated components
+    import { scenarioStore } from '../stores/scenarioStore.svelte.js';
     import AnalysisGrid from '../components/common/AnalysisGrid.svelte';
     import AnalysisLoader from '../components/common/AnalysisLoader.svelte';
     import Calculator from '../components/ui/ModelCalculator.svelte';
 
-    // --- EVENT HANDLERS ---
-    function handleNarrativeInput(event) {
-        scenarioStore.updateWorkingState({ narrative: event.target.value });
-    }
+    // handleNarrativeInput is no longer needed with direct binding.
 </script>
 
 <div class="report-grid">
@@ -33,23 +29,25 @@
     </div>
 
     <!-- Analyst's Comments Panel -->
+    {#if scenarioStore.workingState}
     <div class="panel narrative-panel">
         <h2 class="panel-title">Analyst's Comments</h2>
         <textarea 
-            placeholder="Summarize findings, context, and recommendations here..."
-            value={$scenarioStore.workingState?.narrative || ''}
-            on:input={handleNarrativeInput}
+        placeholder="Summarize findings, context, and recommendations here..."
+        value={scenarioStore.workingState.narrative}
+        oninput={(e) => scenarioStore.updateWorkingState({ narrative: e.currentTarget.value })}
         ></textarea>
     </div>
+    {/if}
 
     <!-- Pinned Items Panel -->
     <div class="panel pinned-items-panel">
         <h2 class="panel-title">Pinned Analyses</h2>
-        {#if !$scenarioStore.workingState?.pinned || $scenarioStore.workingState?.pinned.length === 0}
+        {#if !scenarioStore.workingState?.pinned || scenarioStore.workingState?.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
             <AnalysisGrid class="allow-three-columns">
-                {#each $scenarioStore.workingState?.pinned as pinnedItem (pinnedItem.id)}
+                {#each scenarioStore.workingState.pinned as pinnedItem (pinnedItem.id)}
                     <AnalysisLoader id={pinnedItem.id} />
                 {/each}
             </AnalysisGrid>
@@ -59,6 +57,7 @@
 
 
 <style>
+    /* Styles are unchanged */
     .report-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--spacing-unit); }
     .panel { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: var(--spacing-unit); box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .panel-title { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--header-color); }
