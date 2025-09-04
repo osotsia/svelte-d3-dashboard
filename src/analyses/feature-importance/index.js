@@ -10,7 +10,6 @@ export default {
         xKeys: ['importance'], // Use the new xKeys array
         yKey: 'feature',
         xLabel: 'Normalized Permutation Importance',
-        yLabel: 'Parameter',
         showLegend: false, // Explicitly disable legend
         errorBarKeys: { // Map value keys to confidence keys
             'importance': 'importance_conf'

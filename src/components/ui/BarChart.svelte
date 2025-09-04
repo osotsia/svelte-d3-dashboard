@@ -18,7 +18,7 @@
     // --- D3 & SVG Setup ---
     let width = 500;
     let height = 300;
-    const margin = { top: 20, right: 30, bottom: 60, left: 120 };
+    const margin = { top: 20, right: 20, bottom: 60, left: 100 };
     let svgEl, xAxisG, yAxisG;
 
     // --- Reactive Computations ---
