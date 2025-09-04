@@ -5,6 +5,7 @@ export default {
     title: 'Residuals vs. Fitted (Surrogate)',
     component: ResidualsPlot,
     layout: 'default',
+    view: 'Surrogate Model', 
     explanation: 'Residuals are the errors between the surrogate model\'s predictions and the true model\'s outputs. A random, patternless scatter indicates a well-fitted model.',
     props: {
         xKey: 'fitted',

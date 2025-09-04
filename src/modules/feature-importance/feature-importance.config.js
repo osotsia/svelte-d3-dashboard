@@ -5,6 +5,7 @@ export default {
     title: 'Feature Importance (Surrogate)',
     component: BarChart,
     layout: 'default',
+    view: 'Surrogate Model', 
     explanation: 'This chart ranks input parameters by their contribution to the surrogate model\'s predictions, indicating which factors the model relies on most.',
     props: {
         xKeys: ['importance'], // Use the new xKeys array

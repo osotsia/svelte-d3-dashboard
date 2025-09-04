@@ -1,13 +1,13 @@
 <script>
     import { scenarioStore } from '../stores/scenarioStore.svelte.js';
     import { dataStore } from '../stores/dataStore.svelte.js';
-    import { analyses } from '../modules/index.js';
+    import { modules } from '../modules/module-registry.js';
     import AnalysisBox from './AnalysisBox.svelte';
 
     let { id } = $props();
 
     // --- Data Loading and Prop Assembly ---
-    const staticConfig = analyses[id];
+    const staticConfig = modules[id];
     // Assign the component constructor to a capitalized variable.
     const Component = staticConfig?.component;
 

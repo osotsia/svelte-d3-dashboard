@@ -6,6 +6,7 @@ export default {
     title: 'Parallel Coordinates Plot',
     component: ParallelCoordinatesPlot,
     layout: 'full-width',
+    view: 'Key Drivers', 
     explanation: 'This plot shows relationships between model inputs and LCOH. Each line represents one model run, allowing for visual filtering and correlation analysis. Note: This plot is interactive. Try selecting a range of values on one axis.',
     props: {
         colorKey: 'LCOH'

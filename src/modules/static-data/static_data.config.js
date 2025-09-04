@@ -11,6 +11,7 @@ export const staticData = {
         title: 'System Efficiency Assumption',
         component: StaticDataItem,
         layout: 'default',
+        view: 'Data', 
         explanation: 'Core assumption for system round-trip efficiency, including all subsystems.',
         props: {
             data: {
@@ -25,6 +26,7 @@ export const staticData = {
         title: 'Capital Cost Assumption',
         component: StaticDataItem,
         layout: 'default',
+        view: 'Data', 
         explanation: 'Projected capital expenditure for the pilot system installation.',
         props: {
             data: {
@@ -39,6 +41,7 @@ export const staticData = {
         title: 'Operating Labor Assumption',
         component: StaticDataItem,
         layout: 'default',
+        view: 'Data', 
         explanation: 'Estimated labor requirement for continuous plant operation.',
         props: {
             data: {
@@ -53,6 +56,7 @@ export const staticData = {
         title: 'LCOH Benchmarks',
         component: BenchmarkTable,
         layout: 'full-width',
+        view: 'Data', 
         explanation: 'Comparative LCOH benchmarks for alternative heating technologies under baseline assumptions.',
         props: {
             headers: ['Technology', 'Fuel Price ($/MMBtu)', 'Carbon Tax ($/tonne)', 'Boiler Efficiency (%)', 'Boiler CAPEX ($/MWth)', 'Estimated LCOH ($/Unit)'],

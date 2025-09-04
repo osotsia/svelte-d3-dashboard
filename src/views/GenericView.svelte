@@ -2,7 +2,9 @@
     import AnalysisGrid from '../components/AnalysisGrid.svelte';
     import AnalysisLoader from '../components/AnalysisLoader.svelte';
 
-    const analysisIds = ['model-card', 'feature-importance', 'residuals'];
+    let { analysisModules = [] } = $props();
+
+    const analysisIds = $derived(analysisModules.map(module => module.id));
 </script>
 
 <AnalysisGrid>

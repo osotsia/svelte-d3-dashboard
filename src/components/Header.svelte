@@ -1,8 +1,9 @@
 <script>
     import { activeView } from '../stores/viewStore.svelte.js';
     import ScenarioControls from './ScenarioControls.svelte';
+    import { viewOrder } from '../lib/view-registry.js';
 
-    const views = ['Report', 'Key Drivers', 'Surrogate Model', 'Data'];
+    const views = viewOrder;
 </script>
 
 <header class="app-header">
