@@ -3,7 +3,7 @@
     import { activeView } from './stores/viewStore.svelte.js';
     import { scenarioStore } from './stores/scenarioStore.svelte.js';
     import { parameterRanges } from './lib/model.js';
-    import { viewRegistry } from './lib/view-registry.js';
+    import { viewRegistry } from './views/view-registry.js';
 
     import Header from './components/Header.svelte';
     import ReportView from './views/ReportView.svelte';

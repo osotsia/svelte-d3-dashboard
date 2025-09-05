@@ -1,7 +1,7 @@
 <script>
     import { activeView } from '../stores/viewStore.svelte.js';
     import ScenarioControls from './ScenarioControls.svelte';
-    import { viewOrder } from '../lib/view-registry.js';
+    import { viewOrder } from '../views/view-registry.js';
 
     const views = viewOrder;
 </script>

@@ -14,6 +14,7 @@ viewOrder.forEach(viewName => {
 });
 
 // Populate views with modules from the registry.
+// @ts-ignore
 for (const moduleId in modules) {
     const moduleConfig = modules[moduleId];
     if (moduleConfig.view && views[moduleConfig.view]) {

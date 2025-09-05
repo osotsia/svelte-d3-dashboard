@@ -16,7 +16,9 @@ const moduleFiles = import.meta.glob('./**/*.config.js', { eager: true });
 
 export const modules = Object.values(moduleFiles).reduce((registry, moduleExports) => {
     // Case 1: Handle standard modules with a single 'default' export.
+    // @ts-ignore
     if (moduleExports.default) {
+        // @ts-ignore
         const config = moduleExports.default;
         if (!config.id) {
             console.warn('Module configuration is missing an `id` property and will be skipped:', config);
@@ -27,6 +29,7 @@ export const modules = Object.values(moduleFiles).reduce((registry, moduleExport
 
     // Case 2: Handle files that export collections of modules (like static_data).
     // It iterates over all named exports in the file.
+    // @ts-ignore
     for (const exportName in moduleExports) {
         if (exportName !== 'default') {
             const collection = moduleExports[exportName];
@@ -36,4 +39,4 @@ export const modules = Object.values(moduleFiles).reduce((registry, moduleExport
     }
 
     return registry;
-}, {});
+}, {});  
