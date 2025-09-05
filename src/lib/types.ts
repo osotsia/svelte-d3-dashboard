@@ -1,4 +1,5 @@
-import type { ComponentType, SvelteComponent } from 'svelte';
+// MODIFICATION: Import the 'Component' type from Svelte.
+import type { Component } from 'svelte';
 
 /** Defines the structure for a single parameter's range and default value. */
 export interface ParameterConfig {
@@ -32,7 +33,9 @@ export type ScenarioMap = Record<string, Scenario>;
 export interface ModuleConfig {
     id: string;
     title: string;
-    component: ComponentType<SvelteComponent>;
+    // MODIFICATION: Use the 'Component' type. This is the correct type
+    // for a Svelte 5 component definition.
+    component: Component;
     layout?: 'default' | 'full-width';
     view: 'Key Drivers' | 'Surrogate Model' | 'Data';
     explanation?: string;

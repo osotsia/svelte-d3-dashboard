@@ -1,6 +1,9 @@
 import BarChart from '../../components/BarChart.svelte';
+// MODIFICATION: Import the type
+import type { ModuleConfig } from '../../lib/types';
 
-export default {
+// MODIFICATION: Apply the ModuleConfig type to the exported object.
+const config: ModuleConfig = {
     id: 'sobol',
     title: 'Sobol Indices (True Model)',
     component: BarChart,
@@ -11,19 +14,22 @@ export default {
         yKey: 'param',
         xKeys: ['S1', 'ST'],
         xLabel: 'Sobol Index Value',
-        showLegend: true, // Enable the legend
-        legendLabels: { // Provide descriptive labels
+        showLegend: true,
+        legendLabels: {
             'S1': 'S1 (First-order)',
             'ST': 'ST (Total-order)'
         },
-        errorBarKeys: { // Map value keys to confidence keys
+        errorBarKeys: {
             'S1': 'S1_conf',
             'ST': 'ST_conf'
         }
     },
     mapper: ($dataStore, $workingState) => {
+        // Assume $dataStore.sobol.indices is properly typed elsewhere or cast here.
         const data = $dataStore.sobol?.indices || [];
         const sortedData = [...data].sort((a, b) => b.ST - a.ST);
         return { data: sortedData };
     }
 };
+
+export default config;

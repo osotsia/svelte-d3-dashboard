@@ -7,7 +7,7 @@ import type { ModuleConfig } from '../lib/types';
  * import all `*.config.js` files from the subdirectories.
  */
 
-const moduleFiles = import.meta.glob<Record<string, any>>('./**/*.config.js', { eager: true });
+const moduleFiles = import.meta.glob<Record<string, any>>('./**/*.config.ts', { eager: true });
 
 // MODIFICATION: Replaced JSDoc with native TS type annotation.
 export const modules: Record<string, ModuleConfig> = Object.values(moduleFiles).reduce((registry, moduleExports) => {

@@ -1,6 +1,7 @@
 import ModelCardDisplay from './ModelCardDisplay.svelte';
+import type { ModuleConfig } from '../../lib/types';
 
-export default {
+const config: ModuleConfig = {
     id: 'model-card',
     title: 'Model Card (Surrogate)',
     component: ModelCardDisplay,
@@ -12,3 +13,6 @@ export default {
         data: $dataStore.model_card || {}
     })
 };
+
+
+export default config;

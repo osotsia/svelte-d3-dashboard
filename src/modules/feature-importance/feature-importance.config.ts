@@ -1,6 +1,7 @@
 import BarChart from '../../components/BarChart.svelte';
+import type { ModuleConfig } from '../../lib/types';
 
-export default {
+const config: ModuleConfig = {
     id: 'feature-importance',
     title: 'Feature Importance (Surrogate)',
     component: BarChart,
@@ -20,3 +21,4 @@ export default {
         data: $dataStore['feature-importance']?.data || []
     })
 };
+export default config;

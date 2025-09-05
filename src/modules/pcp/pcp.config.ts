@@ -1,7 +1,8 @@
 import ParallelCoordinatesPlot from './ParallelCoordinatesPlot.svelte';
 import { scenarioStore } from '../../stores/scenarioStore.svelte.js';
+import type { ModuleConfig } from '../../lib/types';
 
-export default {
+const config: ModuleConfig = {
     id: 'pcp',
     title: 'Parallel Coordinates Plot',
     component: ParallelCoordinatesPlot,
@@ -20,3 +21,6 @@ export default {
         scenarioStore.updateWorkingState({ pcpSelections: event.detail });
     }
 };
+
+
+export default config;

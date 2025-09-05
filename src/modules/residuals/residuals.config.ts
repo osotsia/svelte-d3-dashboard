@@ -1,6 +1,7 @@
 import ResidualsPlot from './ScatterPlot.svelte';
+import type { ModuleConfig } from '../../lib/types';
 
-export default {
+const config: ModuleConfig = {
     id: 'residuals',
     title: 'Residuals vs. Fitted (Surrogate)',
     component: ResidualsPlot,
@@ -17,3 +18,5 @@ export default {
         data: $dataStore.residuals?.data || []
     })
 };
+
+export default config;

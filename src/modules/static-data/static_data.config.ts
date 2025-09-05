@@ -1,11 +1,15 @@
 import StaticDataItem from './StaticDataItem.svelte';
 import BenchmarkTable from './BenchmarkTable.svelte';
+// MODIFICATION: Import the ModuleConfig type
+import type { ModuleConfig } from '../../lib/types';
 
 /**
  * A central registry for static, user-defined data items and benchmarks.
  * These are treated like other analyses so they can be pinned to the report.
+ *
+ * MODIFICATION: Apply the correct type: a record where each value is a ModuleConfig.
  */
-export const staticData = {
+export const staticData: Record<string, ModuleConfig> = {
     'assumption-efficiency': {
         id: 'assumption-efficiency',
         title: 'System Efficiency Assumption',
