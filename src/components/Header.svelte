@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { activeView } from '../stores/viewStore.svelte.js';
     import ScenarioControls from './ScenarioControls.svelte';
     import { viewOrder } from '../views/view-registry.js';
@@ -9,11 +9,13 @@
 <header class="app-header">
     <div class="title-and-nav">
         <h1>LCOH Workbench</h1>
-        <nav>
+        <!-- MODIFICATION: Added ARIA role and label for navigation landmark -->
+        <nav role="navigation" aria-label="Main Views">
             {#each views as view}
                 <button 
                     class:active={activeView.value === view} 
                     onclick={() => activeView.set(view)}
+                    aria-current={activeView.value === view ? 'page' : undefined}
                 >
                     {view}
                 </button>
@@ -26,6 +28,7 @@
 </header>
 
 <style>
+    /* Styles are unchanged */
     .app-header { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; padding: 1rem var(--spacing-unit); background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     .title-and-nav { display: flex; align-items: center; gap: 2rem; }
     .scenario-controls-wrapper { margin-left: auto; }
