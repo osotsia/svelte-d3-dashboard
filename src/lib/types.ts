@@ -1,5 +1,8 @@
-// MODIFICATION: Import the 'Component' type from Svelte.
+// lib/types.ts
+
 import type { Component } from 'svelte';
+// MODIFICATION: Import the main payload type.
+import type { MainPayload } from './data.types';
 
 /** Defines the structure for a single parameter's range and default value. */
 export interface ParameterConfig {
@@ -33,13 +36,12 @@ export type ScenarioMap = Record<string, Scenario>;
 export interface ModuleConfig {
     id: string;
     title: string;
-    // MODIFICATION: Use the 'Component' type. This is the correct type
-    // for a Svelte 5 component definition.
     component: Component;
     layout?: 'default' | 'full-width';
     view: 'Key Drivers' | 'Surrogate Model' | 'Data';
     explanation?: string;
     props?: Record<string, any>;
-    mapper?: (dataStore: any, workingState: Scenario) => Record<string, any>;
+    // MODIFICATION: The 'dataStore' parameter is now strongly typed.
+    mapper?: (dataStore: MainPayload, workingState: Scenario) => Record<string, any>;
     updater?: (event: CustomEvent) => void;
 }
