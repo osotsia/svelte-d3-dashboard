@@ -8,16 +8,23 @@ For ease of use, this entire application is compiled into a single, portable HTM
 
 ## Features
 
-- **Interactive LCOH Calculator:** Adjust model parameters (capital cost, efficiency, interest rate, fuel cost) with sliders to see the immediate impact on LCOH.
-- **Scenario Management:** Save, load, and delete parameter scenarios to compare different cases.
+*   **Interactive Scenario Analysis**
+    *   **LCOH Calculator:** Sliders for real-time parameter adjustments and impact analysis.
+    *   **Scenario Management:** Save, load, and compare named scenarios.
 
-- **Key Driver Analysis:**
-    - **Sobol Indices:** View a global sensitivity analysis of the true techno-economic model to understand which parameters contribute most to output variance.
-    - **Parallel Coordinates Plot:** Visually explore relationships between all input parameters and the LCOH output across thousands of model runs.
+*   **Sensitivity & Driver Analysis**
+    *   **Sobol Indices:** Quantify input impact on model variance (direct vs. total effects).
+    *   **Parallel Coordinates Plot:** Visually filter and identify input/output correlations.
 
-- **Surrogate Model Evaluation:**
-    - **Model Card:** Review key metadata and performance metrics (Normalized RMSE, R-squared) of the XGBoost surrogate model.
-    - **Feature Importance:** See which features the surrogate model relies on most heavily.
-    - **Residuals vs. Fitted Plot:** Diagnose the surrogate model's error patterns.
-    
-- **Custom Reporting:** Pin any analysis to the main report page to build a customized view, complete with a narrative section for analyst notes.
+*   **Surrogate Model Diagnostics**
+    *   **Model Card:** Key performance metrics (R², RMSE) and metadata.
+    *   **Permutation Importance:** Rank parameter influence on surrogate model predictions.
+    *   **Residuals Plot:** Diagnose model fit and systematic bias.
+
+*   **Data & Assumptions**
+    *   **Document Assumptions:** Log and display core model inputs, sources, and justifications.
+    *   **Track Benchmarks:** View model outputs alongside external data for comparison.
+
+*   **Customizable Reporting**
+    *   **Pinboard System:** Pin any analysis, assumption, or benchmark to a central report.
+    *   **Analyst Notebook:** Add qualitative summaries and notes to each scenario.
