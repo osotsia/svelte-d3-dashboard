@@ -1,4 +1,4 @@
-import ModelCardDisplay from './ModelCardDisplay.svelte';
+import ModelCardDisplay from './ModelCard.svelte';
 import type { ModuleConfig } from '../../lib/types';
 
 const config: ModuleConfig = {
@@ -9,8 +9,8 @@ const config: ModuleConfig = {
     view: 'Surrogate Model', 
     explanation: 'We train a surrogate when the original model is slow or otherwise costly to evaluate. Below: key metadata and performance metrics.',
     props: {},
-    mapper: ($dataStore, $workingState) => ({
-        data: $dataStore.model_card || {}
+    mapStateToProps: (dataStore, $workingState) => ({
+        data: dataStore.model_card || {}
     })
 };
 

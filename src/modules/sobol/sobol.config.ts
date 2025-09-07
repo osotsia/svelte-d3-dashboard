@@ -24,9 +24,9 @@ const config: ModuleConfig = {
             'ST': 'ST_conf'
         }
     },
-    mapper: ($dataStore, $workingState) => {
-        // Assume $dataStore.sobol.indices is properly typed elsewhere or cast here.
-        const data = $dataStore.sobol?.indices || [];
+    mapStateToProps: (dataStore, $workingState) => {
+        // Assume dataStore.sobol.indices is properly typed elsewhere or cast here.
+        const data = dataStore.sobol?.indices || [];
         const sortedData = [...data].sort((a, b) => b.ST - a.ST);
         return { data: sortedData };
     }

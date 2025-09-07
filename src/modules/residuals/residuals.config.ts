@@ -14,8 +14,8 @@ const config: ModuleConfig = {
         xLabel: 'Fitted LCOH Values',
         yLabel: 'LCOH Residuals'
     },
-    mapper: ($dataStore, $workingState) => ({
-        data: $dataStore.residuals?.data || []
+    mapStateToProps: (dataStore, workingState) => ({
+        data: dataStore.residuals?.data || []
     })
 };
 

@@ -17,8 +17,8 @@ const config: ModuleConfig = {
             'importance': 'importance_conf'
         }
     },
-    mapper: ($dataStore, $workingState) => ({
-        data: $dataStore['feature-importance']?.data || []
+    mapStateToProps: (dataStore, workingState) => ({
+        data: dataStore['feature-importance']?.data || []
     })
 };
 export default config;

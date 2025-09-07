@@ -42,6 +42,6 @@ export interface ModuleConfig {
     explanation?: string;
     props?: Record<string, any>;
     // MODIFICATION: The 'dataStore' parameter is now strongly typed.
-    mapper?: (dataStore: MainPayload, workingState: Scenario) => Record<string, any>;
-    updater?: (event: CustomEvent) => void;
+    mapStateToProps?: (dataStore: MainPayload, workingState: Scenario) => Record<string, any>;
+    handleUpdate?: (event: CustomEvent) => void;
 }

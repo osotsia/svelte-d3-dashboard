@@ -11,8 +11,8 @@
     // Assign the component constructor to a capitalized variable.
     const Component = staticConfig?.component;
 
-    const dynamicProps = $derived(staticConfig?.mapper
-        ? staticConfig.mapper(dataStore, scenarioStore.workingState)
+    const dynamicProps = $derived(staticConfig?.mapStateToProps
+        ? staticConfig.mapStateToProps(dataStore, scenarioStore.workingState)
         : {});
 
     const finalProps = $derived({ ...staticConfig?.props, ...dynamicProps });
@@ -33,8 +33,8 @@
     }
 
     function handleUpdate(event) {
-        if (staticConfig?.updater) {
-            staticConfig.updater(event);
+        if (staticConfig?.handleUpdate) {
+            staticConfig.handleUpdate(event);
         }
     }
 </script>

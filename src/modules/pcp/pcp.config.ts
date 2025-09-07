@@ -12,12 +12,12 @@ const config: ModuleConfig = {
     props: {
         colorKey: 'LCOH'
     },
-    mapper: ($dataStore, $workingState) => ({
-        data: $dataStore.pcp?.data || [],
-        keys: ($dataStore.pcp?.axes || []).map(axis => axis.name),
-        selections: $workingState?.pcpSelections || {}
+    mapStateToProps: (dataStore, workingState) => ({
+        data: dataStore.pcp?.data || [],
+        keys: (dataStore.pcp?.axes || []).map(axis => axis.name),
+        selections: workingState?.pcpSelections || {}
     }),
-    updater: (event) => {
+    handleUpdate: (event) => {
         scenarioStore.updateWorkingState({ pcpSelections: event.detail });
     }
 };
