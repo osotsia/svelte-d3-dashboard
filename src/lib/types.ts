@@ -36,7 +36,7 @@ export type ScenarioMap = Record<string, Scenario>;
 export interface ModuleConfig {
     id: string;
     title: string;
-    component: Component;
+    component: Component<any>;
     layout?: 'default' | 'full-width';
     view: 'Key Drivers' | 'Surrogate Model' | 'Data';
     explanation?: string;

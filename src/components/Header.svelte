@@ -10,7 +10,7 @@
     <div class="title-and-nav">
         <h1>LCOH Workbench</h1>
         <!-- MODIFICATION: Added ARIA role and label for navigation landmark -->
-        <nav role="navigation" aria-label="Main Views">
+        <nav aria-label="Main Views">
             {#each views as view}
                 <button 
                     class:active={activeView.value === view} 
