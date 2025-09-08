@@ -2,20 +2,20 @@
     import { scenarioStore } from '../stores/scenarioStore.svelte.js';
     import { dataStore } from '../stores/dataStore.svelte.js';
     import { modules } from '../modules/module-registry.js';
-    import AnalysisBox from './AnalysisBox.svelte';
+    import ModuleBox from './ModuleBox.svelte';
 
     let { id } = $props();
 
     // --- Data Loading and Prop Assembly ---
-    const staticConfig = modules[id];
+    const moduleConfig = modules[id];
     // Assign the component constructor to a capitalized variable.
-    const Component = staticConfig?.component;
+    const Component = moduleConfig?.component;
 
-    const dynamicProps = $derived(staticConfig?.mapStateToProps
-        ? staticConfig.mapStateToProps(dataStore, scenarioStore.workingState)
+    const dynamicProps = $derived(moduleConfig?.mapStateToProps
+        ? moduleConfig.mapStateToProps(dataStore, scenarioStore.workingState)
         : {});
 
-    const finalProps = $derived({ ...staticConfig?.props, ...dynamicProps });
+    const finalProps = $derived({ ...moduleConfig?.props, ...dynamicProps });
     
     // --- State and Event Handlers ---
     const isPinned = $derived(scenarioStore.workingState?.pinned.some(p => p.id === id));
@@ -33,18 +33,18 @@
     }
 
     function handleUpdate(event) {
-        if (staticConfig?.handleUpdate) {
-            staticConfig.handleUpdate(event);
+        if (moduleConfig?.handleUpdate) {
+            moduleConfig.handleUpdate(event);
         }
     }
 </script>
 
-{#if staticConfig && Component}
-    <AnalysisBox
-        id={staticConfig.id}
-        title={staticConfig.title}
-        layout={staticConfig.layout}
-        explanation={staticConfig.explanation}
+{#if moduleConfig && Component}
+    <ModuleBox
+        id={moduleConfig.id}
+        title={moduleConfig.title}
+        layout={moduleConfig.layout}
+        explanation={moduleConfig.explanation}
         isPinned={isPinned}
         on:togglePin={handleTogglePin}
     >
@@ -52,5 +52,5 @@
             {...finalProps}
             on:update={handleUpdate}
         />
-    </AnalysisBox>
+    </ModuleBox>
 {/if}

@@ -27,7 +27,7 @@
         }
     }
 
-    :global(.view-container > .analysis-box.full-width) {
+    :global(.view-container > .module-box.full-width) {
         grid-column: 1 / -1;
     }
 </style>

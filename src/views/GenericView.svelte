@@ -1,14 +1,14 @@
 <script>
-    import AnalysisGrid from '../components/AnalysisGrid.svelte';
-    import AnalysisLoader from '../components/AnalysisLoader.svelte';
+    import ModuleGrid from '../components/ModuleGrid.svelte';
+    import ModuleLoader from '../components/ModuleLoader.svelte';
 
     let { analysisModules = [] } = $props();
 
-    const analysisIds = $derived(analysisModules.map(module => module.id));
+    const moduleIds = $derived(analysisModules.map(module => module.id));
 </script>
 
-<AnalysisGrid>
-    {#each analysisIds as id (id)}
-        <AnalysisLoader {id} />
+<ModuleGrid>
+    {#each moduleIds as id (id)}
+        <ModuleLoader {id} />
     {/each}
-</AnalysisGrid>
+</ModuleGrid>

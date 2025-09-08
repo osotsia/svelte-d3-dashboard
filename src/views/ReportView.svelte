@@ -1,7 +1,7 @@
 <script>
     import { scenarioStore } from '../stores/scenarioStore.svelte.js';
-    import AnalysisGrid from '../components/AnalysisGrid.svelte';
-    import AnalysisLoader from '../components/AnalysisLoader.svelte';
+    import ModuleGrid from '../components/ModuleGrid.svelte';
+    import ModuleLoader from '../components/ModuleLoader.svelte';
     import Calculator from '../components/ModelCalculator.svelte';
 
     // handleNarrativeInput is no longer needed with direct binding.
@@ -46,11 +46,11 @@
         {#if !scenarioStore.workingState?.pinned || scenarioStore.workingState?.pinned.length === 0}
             <div class="placeholder">Click the pin icon on an analysis in other views to add it to this report.</div>
         {:else}
-            <AnalysisGrid class="allow-three-columns">
+            <ModuleGrid class="allow-three-columns">
                 {#each scenarioStore.workingState.pinned as pinnedItem (pinnedItem.id)}
-                    <AnalysisLoader id={pinnedItem.id} />
+                    <ModuleLoader id={pinnedItem.id} />
                 {/each}
-            </AnalysisGrid>
+            </ModuleGrid>
         {/if}
     </div>
 </div>
