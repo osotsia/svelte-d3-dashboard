@@ -28,3 +28,20 @@ For ease of use, this entire application is compiled into a single, portable HTM
 *   **Customizable Reporting**
     *   **Pinboard System:** Pin any analysis, assumption, or benchmark to a central report.
     *   **Analyst Notebook:** Add qualitative summaries and notes to each scenario.
+
+## **FAQ**
+
+**Q1: What is the primary objective of the LCOH Workbench project?**
+The objective is to accelerate techno-economic analysis and improve report consistency. It integrates a real-time calculator, scenario management, and visualizations into a single interface, consolidating workflows previously split across spreadsheets and model scripts.
+
+**Q2: Why was Svelte 5 chosen for the front-end framework?**
+Svelte 5 was chosen for code conciseness, performance, and a small bundle size, suitable for data-intensive applications. It compiles components to efficient JavaScript, and its rune-based reactivity (`$state`, `$derived`) simplifies state management, reducing code complexity and potential errors.
+
+**Q3: Can I upload my own dataset or connect a different model?**
+No. All model logic and analytical data are pre-compiled into the application. User-provided data or models would require a future version with a backend service.
+
+**Q4: Where is my scenario data stored?**
+Scenario data is saved only in your browser's `localStorage` and is not sent to a server. This ensures privacy but means data is not accessible on other devices and will be lost if browser data is cleared.
+
+**Q5: How can I export a report from the Workbench?**
+The application lacks a dedicated export function. Use your browser’s "Print" command and select "Save as PDF" to generate a static document of the Report view, which includes your pinned analyses and comments.
