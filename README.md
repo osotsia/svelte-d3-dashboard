@@ -1,4 +1,4 @@
-## **Visit the Dashboard:** https://osotsia.github.io/svelte-d3-dashboard/
+#### **Visit the Dashboard:** https://osotsia.github.io/svelte-d3-dashboard/
 
 This is a self-contained, interactive web application for exploring the drivers of Levelized Cost of Heat (LCOH), ie the lifetime (projected) cost of a heat-generating solution divided by the total amount of heat it will generate. It is designed for techno-economic analysts to run scenarios, understand parameter sensitivities, and evaluate the performance of a surrogate machine learning model (used in cases where evaluating the true model is costly).
 
